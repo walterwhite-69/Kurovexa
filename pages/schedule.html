@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Airing Schedule — Kurovexa</title>
+    <meta name="theme-color" content="#07070f">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://graphql.anilist.co" crossorigin>
+    <link rel="dns-prefetch" href="https://graphql.anilist.co">
+
+    <link rel="stylesheet" href="css/style.css?v=1002">
+    <link rel="stylesheet" href="css/auth.css?v=1">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+
+<body>
+    <header id="header">
+        <div class="container">
+            <a href="/" class="logo">
+                <div class="logo-wordmark">
+                    <span class="l">K</span><span class="l">U</span><span class="l">R</span><span
+                        class="l">O</span><span class="l">V</span><span class="l"
+                        style="transform: scaleX(-1); display: inline-block;">E</span><span class="l">X</span><span
+                        class="l">A</span>
+                </div>
+            </a>
+
+            <nav id="main-nav">
+                <a href="index.html">Home</a>
+                <a href="browse.html">Browse</a>
+                <a href="schedule.html" class="active">Schedule</a>
+            <a href="manga.html">Manga</a>
+            <a href="music.html">Music</a>
+            </nav>
+
+            <div class="search-wrap">
+                <span class="search-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </span>
+                <input type="text" id="search-input" class="search-input" placeholder="Search anime…"
+                    autocomplete="off">
+                <div class="autocomplete" id="autocomplete"></div>
+            </div>
+
+            <div class="auth-nav" id="auth-nav"></div>
+
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+
+        <div class="mobile-nav" id="mobile-nav">
+            <div class="mobile-search-wrap">
+                <span class="search-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </span>
+                <input type="text" id="mobile-search-input" class="search-input" placeholder="Search anime…"
+                    autocomplete="off">
+            </div>
+
+            <div id="mobile-auth-nav"
+                style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; margin-bottom: 12px; display: flex; flex-direction: column;">
+            </div>
+
+            <nav class="mobile-nav-links">
+                <a href="index.html">Home</a>
+                <a href="browse.html">Browse</a>
+                <a href="schedule.html" class="active">Schedule</a>
+            <a href="manga.html">Manga</a>
+            <a href="music.html">Music</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content" style="padding-top: calc(var(--header-h) + 40px); min-height: 80vh;">
+        <div class="container">
+            <div class="browse-header" style="justify-content: center; margin-bottom: 40px;">
+                <h1 class="browse-title" style="text-align: center;">Airing Schedule</h1>
+            </div>
+
+            <div id="schedule-grid" class="browse-grid">
+
+            </div>
+
+            <div class="pagination" id="schedule-pagination" style="display: none;">
+                <button id="btn-load-more" class="btn btn-primary" style="margin: 0 auto; display: block;">Load More
+                    Schedule</button>
+            </div>
+        </div>
+    </main>
+
+    <script defer src="js/api.js?v=123"></script>
+    <script>
+        const $ = (s, el = document) => el.querySelector(s);
+        let currentPage = 1;
+
+        function titleOf(a) { return a.title?.english || a.title?.romaji || a.title?.native || 'Unknown'; }
+        function scoreLabel(s) { return s ? (s / 10).toFixed(1) : null; }
+
+        function formatTimeLeft(seconds) {
+            const d = Math.floor(seconds / 86400);
+            const h = Math.floor((seconds % 86400) / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            if (d > 0) return `${d}d ${h}h`;
+            if (h > 0) return `${h}h ${m}m`;
+            return `${m}m`;
+        }
+
+        function buildCard(anime) {
+            const title = titleOf(anime);
+            const img = anime.coverImage?.large || anime.coverImage?.extraLarge || '';
+            const score = scoreLabel(anime.averageScore);
+
+            const nextEp = anime.nextAiringEpisode;
+            const isUnreleased = anime.status === 'NOT_YET_RELEASED' || (nextEp && nextEp.episode === 1) || anime.next_episode === 1;
+
+            let epsBadge = '';
+            if (nextEp) {
+                const left = nextEp.airingAt - (Date.now() / 1000);
+                epsBadge = `<div class="card-badge-ep" style="background:var(--accent-v);color:#fff;top:auto;bottom:10px;left:10px;right:10px;text-align:center;font-weight:700;">EP ${nextEp.episode} in ${formatTimeLeft(left)}</div>`;
+            } else if (anime.episodes) {
+                epsBadge = `<div class="card-badge-ep">EP ${anime.episodes}</div>`;
+            }
+
+            let quickBtn = '<div class="card-quick" style="bottom: 45px;"><div class="card-quick-btn" style="background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);">View Details</div></div>';
+
+            const url = `info.html?id=${anime.id}`;
+            return `
+              <div class="anime-card" onclick="location.href='${url}'">
+                <div class="card-poster">
+                  <img src="${img}" alt="${title}" loading="lazy">
+                  <div class="card-overlay"></div>
+                  ${epsBadge}
+                  ${quickBtn}
+                </div>
+                <div class="card-body">
+                  <div class="card-title">${title}</div>
+                  <div class="card-meta">
+                    ${score ? `<span class="card-score">★ ${score}</span>` : ''}
+                    ${anime.format ? `<span class="card-meta-item">${anime.format}</span>` : ''}
+                    ${anime.seasonYear ? `<span class="card-meta-item">${anime.seasonYear}</span>` : ''}
+                  </div>
+                </div>
+              </div>`;
+        }
+
+        async function loadSchedule(append = false) {
+            const grid = document.getElementById('schedule-grid');
+            const btn = document.getElementById('btn-load-more');
+
+            if (!append) {
+                grid.innerHTML = Array(15).fill('').map(() => `
+                  <div class="skel-card" style="width: 100%;">
+                    <div class="skeleton skel-poster"></div>
+                    <div class="skeleton skel-line" style="margin-top:10px;"></div>
+                  </div>`).join('');
+            } else {
+                if (btn) { btn.innerText = 'Loading...'; btn.disabled = true; }
+            }
+
+            try {
+                const res = await Kurovexa.schedule(currentPage);
+                const raw = Array.isArray(res) ? res : (res.results || res.data || []);
+
+                // Transform airingSchedule entries into media-like objects, deduplicate by media id
+                const seenIds = new Set();
+                const items = [];
+                for (const s of raw) {
+                    if (!s.media || !s.media.id) continue;
+                    if (seenIds.has(s.media.id)) continue;
+                    seenIds.add(s.media.id);
+                    items.push({
+                        ...s.media,
+                        nextAiringEpisode: {
+                            episode: s.episode,
+                            airingAt: s.airingAt,
+                            timeUntilAiring: s.timeUntilAiring
+                        }
+                    });
+                }
+
+                if (!append) grid.innerHTML = '';
+
+                if (!items.length) {
+                    if (!append) grid.innerHTML = '<div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-muted);">No schedule data available.</div>';
+                    document.getElementById('schedule-pagination').style.display = 'none';
+                    return;
+                }
+
+                grid.innerHTML += items.map(buildCard).join('');
+
+                document.getElementById('schedule-pagination').style.display = 'block';
+                if (btn) { btn.innerText = 'Load More Schedule'; btn.disabled = false; }
+
+                if (items.length < 20 && items.length > 0) {
+                    document.getElementById('schedule-pagination').style.display = 'none';
+                }
+            } catch (e) {
+                if (!append) grid.innerHTML = '<div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--accent-red);">Failed to load schedule.</div>';
+                console.error(e);
+                if (btn) btn.innerText = 'Error Loading More';
+            }
+        }
+
+        function initHeader() {
+            const header = document.getElementById('header');
+            if (header) {
+                window.addEventListener('scroll', () => {
+                    header.classList.toggle('scrolled', window.scrollY > 20);
+                }, { passive: true });
+            }
+        }
+
+        function initMobileMenu() {
+            const btn = document.getElementById('mobile-menu-btn');
+            const nav = document.getElementById('mobile-nav');
+            if (!btn || !nav) return;
+            btn.addEventListener('click', () => {
+                btn.classList.toggle('open');
+                nav.classList.toggle('open');
+            });
+            document.addEventListener('click', e => {
+                if (!e.target.closest('#header')) {
+                    btn.classList.remove('open');
+                    nav.classList.remove('open');
+                }
+            });
+            const mobileInput = document.getElementById('mobile-search-input');
+            if (mobileInput) {
+                mobileInput.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' && mobileInput.value.trim()) {
+                        location.href = `browse.html?q=${encodeURIComponent(mobileInput.value.trim())}`;
+                    }
+                });
+            }
+        }
+
+        document.getElementById('btn-load-more')?.addEventListener('click', () => {
+            currentPage++;
+            loadSchedule(true);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeader();
+            initMobileMenu();
+            loadSchedule();
+
+            let searchTimer = null;
+            const input = document.getElementById('search-input');
+            const box = document.getElementById('autocomplete');
+            if (input && box) {
+                input.addEventListener('input', () => {
+                    const q = input.value.trim();
+                    clearTimeout(searchTimer);
+                    if (q.length < 2) { box.classList.remove('open'); return; }
+                    searchTimer = setTimeout(async () => {
+                        try {
+                            const data = await Kurovexa.suggest(q);
+                            const items = Array.isArray(data) ? data : (data.results || data.data || []);
+                            if (!items.length) { box.classList.remove('open'); return; }
+                            box.innerHTML = items.slice(0, 7).map(a => `<div class="autocomplete-item" onclick="location.href='info.html?id=${a.id}'"><img src="${a.poster || a.coverImage?.large || ''}" loading="lazy"><div><div class="autocomplete-item-title">${titleOf(a)}</div><div class="autocomplete-item-meta">${a.format || ''} ${a.seasonYear || ''}</div></div></div>`).join('');
+                            box.classList.add('open');
+                        } catch { box.classList.remove('open'); }
+                    }, 280);
+                });
+                input.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' && input.value.trim()) location.href = `browse.html?q=${encodeURIComponent(input.value.trim())}`;
+                    if (e.key === 'Escape') box.classList.remove('open');
+                });
+                document.addEventListener('click', e => { if (!e.target.closest('.search-wrap')) box.classList.remove('open'); });
+            }
+        });
+    </script>
+    <script defer src="js/auth.js?v=119"></script>
+    <script defer src="js/mobile-nav.js?v=6"></script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+
+</html>

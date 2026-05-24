@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Watch Anime — Kurovexa</title>
+    <link rel="stylesheet" href="css/style.css?v=1020">
+    <link rel="stylesheet" href="css/kv-player.css?v=109">
+    <link rel="stylesheet" href="css/auth.css?v=108">
+    <link rel="stylesheet" href="css/comments.css?v=2">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://graphql.anilist.co" crossorigin>
+    <link rel="dns-prefetch" href="https://graphql.anilist.co">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+
+<body>
+    <header id="header">
+        <div class="container">
+            <a href="/" class="logo">
+                <div class="logo-wordmark">
+                    <span class="l">K</span><span class="l">U</span><span class="l">R</span><span
+                        class="l">O</span><span class="l">V</span><span class="l"
+                        style="transform: scaleX(-1); display: inline-block;">E</span><span class="l">X</span><span
+                        class="l">A</span>
+                </div>
+            </a>
+
+            <nav id="main-nav">
+                <a href="index.html">Home</a>
+                <a href="browse.html">Browse</a>
+                <a href="schedule.html">Schedule</a>
+                <a href="music.html">Music</a>
+            </nav>
+
+            <div class="search-wrap">
+                <span class="search-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </span>
+                <input type="text" id="search-input" class="search-input" placeholder="Search anime…"
+                    autocomplete="off">
+                <div class="autocomplete" id="autocomplete"></div>
+            </div>
+
+            <div class="auth-nav" id="auth-nav"></div>
+
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+
+        <div class="mobile-nav" id="mobile-nav">
+            <div class="mobile-search-wrap">
+                <span class="search-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </span>
+                <input type="text" id="mobile-search-input" class="search-input" placeholder="Search anime…"
+                    autocomplete="off">
+                <div class="autocomplete" id="mobile-autocomplete"></div>
+            </div>
+
+            <div id="mobile-auth-nav"
+                style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; margin-bottom: 12px; display: flex; flex-direction: column;">
+            </div>
+
+            <nav class="mobile-nav-links">
+                <a href="index.html">Home</a>
+                <a href="browse.html">Browse</a>
+                <a href="schedule.html">Schedule</a>
+                <a href="music.html">Music</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content" class="watch-container">
+          <div class="container">
+              <div class="watch-layout">
+
+                  <section class="watch-main">
+                      <div class="player-wrapper">
+                          <div id="player-area" class="player-placeholder">
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                  stroke-linecap="round">
+                                  <circle cx="12" cy="12" r="10" />
+                                  <polygon points="10 8 16 12 10 16 10 8" />
+                              </svg>
+                              <span>Loading Player...</span>
+                          </div>
+                      </div>
+
+                      <div class="kv-prefs-bar" id="kv-prefs-bar">
+                          <button class="kv-pref-btn" id="pref-auto-next" onclick="kvTogglePref('kv_auto_next')">
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                              <span>Auto Next</span>
+                              <span class="kv-pref-pill" id="pill-auto-next"><span class="kv-pref-knob"></span></span>
+                          </button>
+                          <div class="kv-prefs-sep"></div>
+                          <button class="kv-pref-btn" id="pref-auto-skip" onclick="kvTogglePref('kv_auto_skip')">
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M5 4l10 8-10 8V4z"/><path d="M19 5v14"/></svg>
+                              <span>Auto Skip Intro/Outro</span>
+                              <span class="kv-pref-pill" id="pill-auto-skip"><span class="kv-pref-knob"></span></span>
+                          </button>
+                      </div>
+
+                      <div class="watch-warn-banner" id="watch-warn-banner">
+                          <svg class="wwb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                          </svg>
+                          <span class="wwb-text">If the current server doesn't work, feel free to try the other available servers.</span>
+                          <button class="wwb-close" type="button" onclick="this.parentElement.style.display='none'" aria-label="Dismiss">
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                          </button>
+                      </div>
+
+                      <div class="watch-player-info">
+                          <div id="current-ep-label" class="watch-ep-label">Episode 1</div>
+                          <h1 id="current-ep-title" class="watch-ep-title">Loading...</h1>
+                          <div id="current-ep-filler-warn"
+                              style="display:none; color: #facc15; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 8px;">
+                              You are watching a filler episode</div>
+                      </div>
+
+                      <div class="action-bar">
+                          <a id="action-anime" class="action-anime" href="javascript:void(0)">
+                              <div class="aa-poster" id="aa-poster"></div>
+                              <div class="aa-info">
+                                  <div class="aa-name" id="aa-name">&nbsp;</div>
+                                  <div class="aa-meta" id="aa-meta">&nbsp;</div>
+                              </div>
+                          </a>
+                          <div class="action-buttons" id="action-buttons">
+
+                              <div class="audio-toggle" id="audio-lang-bar">
+                                  <button type="button" class="audio-btn active" data-audio="sub">Sub</button>
+                                  <button type="button" class="audio-btn" data-audio="dub">Dub</button>
+                              </div>
+
+                              <button type="button" class="action-btn" id="server-toggle-btn" aria-expanded="false" aria-controls="server-panel">
+                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                      <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                                      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                                      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                                  </svg>
+                                  <span>Server</span>
+                              </button>
+
+                              <button type="button" class="action-btn" id="share-btn">
+                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                                      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                                  </svg>
+                                  <span>Share</span>
+                              </button>
+
+                              <span class="audio-lang-selected" id="audio-lang-selected" style="display:none">Selected: <strong>Sub</strong></span>
+                          </div>
+                      </div>
+
+                      <div class="server-panel is-hidden" id="server-panel">
+                          <div class="server-panel-row">
+                              <div class="server-group" id="server-group-internal" style="display:none;">
+                                  <button type="button" class="server-group-toggle" data-group="internal" aria-expanded="false" aria-controls="internal-servers">
+                                      <svg class="sg-icon" viewBox="0 0 16 16" fill="currentColor" width="13" height="13" aria-hidden="true">
+                                          <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" fill="none" />
+                                          <path d="M8 4v4l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none" />
+                                      </svg>
+                                      <span class="sg-label">Internal</span>
+                                      <span class="sg-count" id="sg-count-internal"></span>
+                                      <svg class="sg-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12" aria-hidden="true">
+                                          <path d="M4 6l4 4 4-4" stroke-linecap="round" stroke-linejoin="round" />
+                                      </svg>
+                                  </button>
+                                  <div class="server-btn-row collapsible" id="internal-servers"></div>
+                              </div>
+                              <div class="server-group" id="server-group-external" style="display:none;">
+                                  <button type="button" class="server-group-toggle" data-group="external" aria-expanded="false" aria-controls="external-servers">
+                                      <svg class="sg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13" aria-hidden="true">
+                                          <rect x="2" y="3" width="12" height="9" rx="1.5" />
+                                          <path d="M6 12l-.5 2M10 12l.5 2M4.5 14h7" />
+                                      </svg>
+                                      <span class="sg-label">External</span>
+                                      <span class="sg-count" id="sg-count-external"></span>
+                                      <svg class="sg-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12" aria-hidden="true">
+                                          <path d="M4 6l4 4 4-4" stroke-linecap="round" stroke-linejoin="round" />
+                                      </svg>
+                                  </button>
+                                  <div class="server-btn-row collapsible" id="external-servers"></div>
+                              </div>
+                              <div class="server-quality-wrap" id="quality-wrap" style="display:none;">
+                                  <select class="server-quality-select" id="quality-select">
+                                      <option value="">Quality</option>
+                                  </select>
+                              </div>
+                          </div>
+                          <div id="server-loading" class="server-loading" style="display:none;">
+                              <span class="server-loading-dot"></span>
+                              <span>Loading streams…</span>
+                          </div>
+                          <div id="server-error" class="server-error" style="display:none;"></div>
+                      </div>
+
+                      <div id="anime-details" class="watch-desc-card"></div>
+
+                      <aside class="seasons-aside seasons-aside--inline" id="seasons-aside" hidden>
+                          <div class="seasons-aside-header">Seasons</div>
+                          <div class="seasons-scroller" id="seasons-scroller">
+                              <button type="button" class="sa-nav sa-nav-prev" id="sa-nav-prev" aria-label="Scroll seasons left" hidden>
+                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+                              </button>
+                              <div id="seasons-list" class="seasons-aside-list"></div>
+                              <button type="button" class="sa-nav sa-nav-next" id="sa-nav-next" aria-label="Scroll seasons right" hidden>
+                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                              </button>
+                          </div>
+                      </aside>
+                  </section>
+
+                  <div class="watch-sidebar-col">
+                      <aside class="watch-sidebar">
+                          <div class="up-next-header" id="up-next-header">
+                              <div class="un-info">
+                                  <div class="un-title" id="up-next-title">Up Next</div>
+                                  <div class="un-subtitle" id="up-next-subtitle">Loading episodes…</div>
+                              </div>
+                          </div>
+
+                          <div id="next-ep-strip" class="next-ep-strip" hidden>
+                              <div id="next-ep-countdown" class="next-ep-pill" role="status" aria-live="polite">
+                                  <svg class="nep-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+                                      <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                                  </svg>
+                                  <span class="nep-label">Next episode in</span>
+                                  <div class="nep-units">
+                                      <div class="nec-unit"><span id="nec-d"  class="nec-num">0</span><span class="nec-u">d</span></div>
+                                      <div class="nec-unit"><span id="nec-h"  class="nec-num">00</span><span class="nec-u">h</span></div>
+                                      <div class="nec-unit"><span id="nec-m"  class="nec-num">00</span><span class="nec-u">m</span></div>
+                                      <div class="nec-unit"><span id="nec-s"  class="nec-num">00</span><span class="nec-u">s</span></div>
+                                      <div class="nec-unit"><span id="nec-ms" class="nec-num">000</span><span class="nec-u">ms</span></div>
+                                  </div>
+                              </div>
+                          </div>
+
+                          <div class="ep-search-wrap">
+                              <input type="text" id="ep-search-input" class="ep-search-input"
+                                  placeholder="Search Episode" autocomplete="off">
+                          </div>
+                          <div class="ep-view-bar">
+                              <span class="ep-view-bar-label" id="ep-view-bar-label">Episodes</span>
+                              <button id="ep-view-toggle" class="ep-view-toggle-btn" onclick="toggleEpView()">
+                                  <svg id="ep-view-icon-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                                  <svg id="ep-view-icon-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                                  <span id="ep-view-toggle-label">Grid</span>
+                              </button>
+                          </div>
+                          <div class="ep-list" id="ep-list"></div>
+                      </aside>
+
+                      <aside class="more-like-this">
+                          <div class="mlt-header">More like this</div>
+                          <div id="rec-list" class="rec-list"></div>
+                      </aside>
+                  </div>
+              </div>
+
+              <section id="comments-section" class="comments-section watch-comments-section">
+                  <div class="comments-header">
+                      <h3 class="comments-title">Discussion</h3>
+                      <span class="comments-count" id="comments-count">0 Comments</span>
+                  </div>
+
+                  <div class="comment-input-area">
+                      <img src="favicon.svg" alt="Avatar" class="current-user-avatar" id="current-user-avatar">
+                      <div class="comment-input-wrapper">
+                          <textarea id="main-comment-input" class="comment-textarea" placeholder="Add a comment..." rows="1"></textarea>
+                          <div id="main-gif-preview" class="comment-gif-preview" style="display: none;"></div>
+                          <div class="comment-actions">
+                              <span class="comment-char-count" id="main-char-count">0/1000</span>
+                              <label class="comment-spoiler-label">
+                                  <input type="checkbox" id="main-comment-spoiler">
+                                  Spoiler
+                              </label>
+                              <button class="btn btn-ghost btn-sm gif-toggle-btn" id="main-gif-toggle-btn" title="Add GIF">
+                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                      <rect x="2" y="2" width="20" height="20" rx="4" ry="4"/>
+                                      <circle cx="8.5" cy="8.5" r="1.5"/><path d="M22 15l-5-5L5 21"/>
+                                  </svg>
+                              </button>
+                              <button class="btn btn-primary btn-sm" id="main-comment-btn" disabled>Post</button>
+                              <div class="gif-picker-overlay" id="gif-picker-modal">
+                                  <div class="gif-picker-container">
+                                      <div class="gif-picker-header">
+                                          <input type="text" id="gif-search-input" placeholder="Search Tenor GIFs..." class="gif-search-input">
+                                          <button class="btn btn-ghost btn-sm close-gif-modal" id="close-gif-picker">
+                                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                                          </button>
+                                      </div>
+                                      <div class="gif-results-grid" id="gif-results-grid"></div>
+                                      <div class="gif-loading-spinner" id="gif-loading-spinner" style="display: none;">
+                                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin-icon"><circle cx="12" cy="12" r="10"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                          <div id="comment-login-overlay" class="comment-login-overlay">
+                              <span>You must be logged in to comment.</span>
+                              <button class="btn btn-sm btn-primary" onclick="openAuthModal('login')">Login</button>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="comments-list-wrapper">
+                      <div class="comments-list" id="comments-list">
+                          <div class="comments-loading">
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin-icon">
+                                  <circle cx="12" cy="12" r="10"/>
+                                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                              </svg>
+                          </div>
+                      </div>
+                      <div class="comments-fade-mask" id="comments-fade-mask">
+                          <button class="btn btn-ghost" id="show-more-comments-btn">Show More Comments</button>
+                      </div>
+                  </div>
+              </section>
+          </div>
+      </main>
+
+    <footer>
+        <div class="container footer-content">
+            <a href="/" class="logo" style="margin-bottom:0">
+                <div class="logo-wordmark">
+                    <span class="l">K</span><span class="l">U</span><span class="l">R</span><span
+                        class="l">O</span><span class="l">V</span><span class="l"
+                        style="transform: scaleX(-1); display: inline-block;">E</span><span class="l">X</span><span
+                        class="l">A</span>
+                </div>
+            </a>
+            <p class="footer-brand-desc">Your premium destination for anime streaming. Watch thousands of titles subbed
+                and dubbed in crystal-clear HD &mdash; free, always.</p>
+
+            <div class="footer-links-row">
+                <a href="index.html">Home</a>
+                <a href="browse.html">Browse</a>
+                <a href="schedule.html">Schedule</a>
+                <a href="music.html">Music</a>
+            </div>
+
+            <div class="footer-links-row">
+                <a href="terms.html">Terms of Use</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="dmca.html">DMCA</a>
+            </div>
+
+            <div class="footer-author">
+                <span>Developer: Walter</span>
+                <a href="https://github.com/walterwhite-69" target="_blank" rel="noopener">GitHub: walterwhite-69</a>
+            </div>
+
+            <div class="footer-bottom">
+                <span class="footer-copy">© 2026 Kurovexa. All rights reserved.</span>
+                <span class="footer-disclaimer">Kurovexa does not store any video files. All content is sourced from
+                    third-party providers.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script defer src="js/api.js?v=123"></script>
+    <script defer src="js/anime.js?v=165"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LfzHX8sAAAAAN70WElpj4nM__wxhllZQNZCAFGb" async
+        defer></script>
+    <script defer src="js/auth.js?v=119"></script>
+    <script defer src="js/mobile-nav.js?v=6"></script>
+    <script defer src="js/comments.js?v=3"></script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+
+</html>

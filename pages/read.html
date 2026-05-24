@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Reader — Kurovexa Manga</title>
+    <meta name="theme-color" content="#050505">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://vaultapi-one.vercel.app" crossorigin>
+    <link rel="preconnect" href="https://atsu.moe" crossorigin>
+    <link rel="stylesheet" href="css/style.css?v=1002">
+    <link rel="stylesheet" href="css/manga.css?v=5">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <style>
+        body {
+            margin: 0;
+            background: #050505;
+        }
+
+        footer,
+        header {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body id="manga-reader" data-bg="dark">
+
+    <div id="reader-loading">
+        <div class="rd-spinner"></div>
+        <p style="color:#94a3b8;font-size:0.9rem;">Loading chapter…</p>
+    </div>
+
+    <div id="rd-topbar">
+        <a id="rd-back" href="manga.html" class="rd-icon-btn" aria-label="Back to series">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="12,19 5,12 12,5" />
+            </svg>
+        </a>
+        <div class="rd-top-info">
+            <div class="rd-top-title" id="rd-title">Loading…</div>
+            <div class="rd-top-chap" id="rd-chap"></div>
+        </div>
+        <div class="rd-top-actions">
+            <button id="rd-settings-btn" class="rd-icon-btn" aria-label="Reader settings">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div id="rd-stage"></div>
+
+    <div id="rd-bottombar">
+        <a id="rd-prev-chap" class="rd-icon-btn" aria-label="Previous chapter">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="11,17 6,12 11,7" />
+                <polyline points="18,17 13,12 18,7" />
+            </svg>
+        </a>
+        <div class="rd-progress">
+            <span class="rd-page-num" id="rd-page-num">— / —</span>
+            <div class="rd-bar"><div class="rd-bar-fill" id="rd-bar-fill"></div></div>
+        </div>
+        <a id="rd-next-chap" class="rd-icon-btn" aria-label="Next chapter">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="13,17 18,12 13,7" />
+                <polyline points="6,17 11,12 6,7" />
+            </svg>
+        </a>
+    </div>
+
+    <div id="rd-mode-picker">
+        <div class="rd-mp-card">
+            <h2>How do you want to read?</h2>
+            <p>Pick a reading style. You can change this any time from settings.</p>
+            <div class="rd-mp-options">
+                <button class="rd-mp-opt" data-mode="vertical" type="button">
+                    <svg class="rd-mp-icon rd-mp-icon-vertical" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <rect class="rd-mp-frame" x="6" y="3" width="12" height="18" rx="2" />
+                        <g class="rd-mp-arrow-y">
+                            <line x1="12" y1="7" x2="12" y2="14" />
+                            <polyline points="9,11 12,14 15,11" />
+                            <animateTransform attributeName="transform" type="translate"
+                                values="0 -3; 0 3; 0 -3" keyTimes="0; 0.5; 1"
+                                calcMode="spline" keySplines="0.45 0 0.35 1; 0.45 0 0.35 1"
+                                dur="1.7s" repeatCount="indefinite" />
+                            <animate attributeName="opacity"
+                                values="0; 1; 1; 0" keyTimes="0; 0.2; 0.8; 1"
+                                dur="1.7s" repeatCount="indefinite" />
+                        </g>
+                    </svg>
+                    <strong>Vertical</strong>
+                    <span>Long-strip scroll. Best for webtoons and manhwa.</span>
+                </button>
+                <button class="rd-mp-opt" data-mode="horizontal" type="button">
+                    <svg class="rd-mp-icon rd-mp-icon-horizontal" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <rect class="rd-mp-frame" x="3" y="6" width="18" height="12" rx="2" />
+                        <g class="rd-mp-arrow-x">
+                            <line x1="8" y1="12" x2="15" y2="12" />
+                            <polyline points="12,9 15,12 12,15" />
+                            <animateTransform attributeName="transform" type="translate"
+                                values="-3 0; 3 0; -3 0" keyTimes="0; 0.5; 1"
+                                calcMode="spline" keySplines="0.45 0 0.35 1; 0.45 0 0.35 1"
+                                dur="1.7s" repeatCount="indefinite" />
+                            <animate attributeName="opacity"
+                                values="0; 1; 1; 0" keyTimes="0; 0.2; 0.8; 1"
+                                dur="1.7s" repeatCount="indefinite" />
+                        </g>
+                    </svg>
+                    <strong>Horizontal</strong>
+                    <span>Page-by-page. Swipe or tap to turn the page.</span>
+                </button>
+            </div>
+            <p class="rd-mp-hint">Tip: arrow keys, spacebar and touch swipes all work in horizontal mode.</p>
+        </div>
+    </div>
+
+    <aside id="rd-settings">
+        <button id="rd-settings-close" aria-label="Close">×</button>
+        <div class="rd-set-title">Reader Settings</div>
+
+        <div class="rd-set-group">
+            <label class="rd-set-label">Reading Direction</label>
+            <div class="rd-set-row">
+                <button class="rd-chip" data-set-mode="vertical" type="button">Vertical</button>
+                <button class="rd-chip" data-set-mode="horizontal" type="button">Horizontal</button>
+            </div>
+        </div>
+
+        <div class="rd-set-group">
+            <label class="rd-set-label">Page Fit</label>
+            <div class="rd-set-row">
+                <button class="rd-chip" data-set-fit="width" type="button">Fit Width</button>
+                <button class="rd-chip" data-set-fit="height" type="button">Fit Height</button>
+                <button class="rd-chip" data-set-fit="original" type="button">Original</button>
+            </div>
+        </div>
+
+        <div class="rd-set-group">
+            <label class="rd-set-label">Background</label>
+            <div class="rd-set-row">
+                <button class="rd-chip" data-set-bg="dark" type="button">Dark</button>
+                <button class="rd-chip" data-set-bg="black" type="button">Black</button>
+                <button class="rd-chip" data-set-bg="gray" type="button">Gray</button>
+                <button class="rd-chip" data-set-bg="paper" type="button">Sepia</button>
+            </div>
+        </div>
+    </aside>
+
+    <script defer src="js/api.js?v=123"></script>
+    <script defer src="js/manga.js?v=5"></script>
+    <script defer src="js/mobile-nav.js?v=5"></script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+
+</html>

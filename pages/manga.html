@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Kurovexa Manga — Read Manga &amp; Manhwa Online Free</title>
+    <meta name="description"
+        content="Read thousands of manga, manhwa and manhua online free on Kurovexa. Sync your reading list, swipe horizontally or scroll vertically — your call.">
+    <meta property="og:title" content="Kurovexa Manga — Read Online Free">
+    <meta property="og:description"
+        content="Read thousands of manga, manhwa and manhua online free on Kurovexa.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#07070f">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://vaultapi-one.vercel.app" crossorigin>
+    <link rel="stylesheet" href="css/style.css?v=1002">
+    <link rel="stylesheet" href="css/auth.css?v=108">
+    <link rel="stylesheet" href="css/manga.css?v=5">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+
+<body id="manga-home">
+
+    <header id="header">
+        <div class="container">
+            <a href="/" class="logo">
+                <div class="logo-wordmark">
+                    <span class="l">K</span><span class="l">U</span><span class="l">R</span><span
+                        class="l">O</span><span class="l">V</span><span class="l"
+                        style="transform: scaleX(-1); display: inline-block;">E</span><span class="l">X</span><span
+                        class="l">A</span>
+                </div>
+            </a>
+
+            <nav id="main-nav">
+                <a href="index.html">Home</a>
+                <a href="browse.html">Browse</a>
+                <a href="schedule.html">Schedule</a>
+                <a href="manga.html" class="active">Manga</a>
+            <a href="music.html">Music</a>
+            </nav>
+
+            <div class="search-wrap">
+                <span class="search-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </span>
+                <input type="text" data-search="manga" class="search-input" placeholder="Search manga…"
+                    autocomplete="off">
+                <div class="autocomplete"></div>
+            </div>
+
+            <div class="auth-nav" id="auth-nav"></div>
+
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+
+        <div class="mobile-nav" id="mobile-nav">
+            <div class="mobile-search-wrap">
+                <span class="search-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </span>
+                <input type="text" data-search="manga" class="search-input" placeholder="Search manga…"
+                    autocomplete="off">
+                <div class="autocomplete"></div>
+            </div>
+
+            <div id="mobile-auth-nav"
+                style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; margin-bottom: 12px; display: flex; flex-direction: column;">
+            </div>
+
+            <nav class="mobile-nav-links">
+                <a href="index.html">Home</a>
+                <a href="browse.html">Browse</a>
+                <a href="schedule.html">Schedule</a>
+                <a href="manga.html">Manga</a>
+            <a href="music.html">Music</a>
+            </nav>
+        </div>
+    </header>
+
+    <section id="hero">
+        <div id="hero-slides"></div>
+        <div class="hero-indicators" id="hero-dots"></div>
+        <button class="hero-prev" id="hero-prev" aria-label="Previous slide">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15,18 9,12 15,6" />
+            </svg>
+        </button>
+        <button class="hero-next" id="hero-next" aria-label="Next slide">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9,18 15,12 9,6" />
+            </svg>
+        </button>
+    </section>
+
+    <main id="main-content">
+        <div class="container">
+            <div class="home-grid">
+                <div class="home-sections">
+
+                    <section class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Trending</h2>
+                            <div style="display:flex;align-items:center;gap:16px;">
+                                <button class="btn btn-ghost btn-sm btn-icon row-nav-btn" data-target="row-trending"
+                                    data-dir="prev" aria-label="Previous">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.5" stroke-linecap="round">
+                                        <polyline points="15,18 9,12 15,6" />
+                                    </svg>
+                                </button>
+                                <button class="btn btn-ghost btn-sm btn-icon row-nav-btn" data-target="row-trending"
+                                    data-dir="next" aria-label="Next">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.5" stroke-linecap="round">
+                                        <polyline points="9,18 15,12 9,6" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="scroll-row" id="row-trending"></div>
+                    </section>
+
+                    <section class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Hot Updates</h2>
+                            <div style="display:flex;align-items:center;gap:16px;">
+                                <button class="btn btn-ghost btn-sm btn-icon row-nav-btn" data-target="row-hot"
+                                    data-dir="prev" aria-label="Previous">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.5" stroke-linecap="round">
+                                        <polyline points="15,18 9,12 15,6" />
+                                    </svg>
+                                </button>
+                                <button class="btn btn-ghost btn-sm btn-icon row-nav-btn" data-target="row-hot"
+                                    data-dir="next" aria-label="Next">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.5" stroke-linecap="round">
+                                        <polyline points="9,18 15,12 9,6" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="scroll-row" id="row-hot"></div>
+                    </section>
+
+                    <section class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Recently Updated</h2>
+                            <div style="display:flex;align-items:center;gap:16px;">
+                                <button class="btn btn-ghost btn-sm btn-icon row-nav-btn" data-target="row-recent"
+                                    data-dir="prev" aria-label="Previous">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.5" stroke-linecap="round">
+                                        <polyline points="15,18 9,12 15,6" />
+                                    </svg>
+                                </button>
+                                <button class="btn btn-ghost btn-sm btn-icon row-nav-btn" data-target="row-recent"
+                                    data-dir="next" aria-label="Next">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.5" stroke-linecap="round">
+                                        <polyline points="9,18 15,12 9,6" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="scroll-row" id="row-recent"></div>
+                    </section>
+
+                    <section class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Most Popular</h2>
+                            <div style="display:flex;align-items:center;gap:16px;">
+                                <button class="btn btn-ghost btn-sm btn-icon row-nav-btn" data-target="row-popular"
+                                    data-dir="prev" aria-label="Previous">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.5" stroke-linecap="round">
+                                        <polyline points="15,18 9,12 15,6" />
+                                    </svg>
+                                </button>
+                                <button class="btn btn-ghost btn-sm btn-icon row-nav-btn" data-target="row-popular"
+                                    data-dir="next" aria-label="Next">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.5" stroke-linecap="round">
+                                        <polyline points="9,18 15,12 9,6" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="scroll-row" id="row-popular"></div>
+                    </section>
+
+                    <section class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Top Rated</h2>
+                            <div style="display:flex;align-items:center;gap:16px;">
+                                <button class="btn btn-ghost btn-sm btn-icon row-nav-btn" data-target="row-top"
+                                    data-dir="prev" aria-label="Previous">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.5" stroke-linecap="round">
+                                        <polyline points="15,18 9,12 15,6" />
+                                    </svg>
+                                </button>
+                                <button class="btn btn-ghost btn-sm btn-icon row-nav-btn" data-target="row-top"
+                                    data-dir="next" aria-label="Next">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.5" stroke-linecap="round">
+                                        <polyline points="9,18 15,12 9,6" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="scroll-row" id="row-top"></div>
+                    </section>
+
+                    <section class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Recently Added</h2>
+                            <div style="display:flex;align-items:center;gap:16px;">
+                                <button class="btn btn-ghost btn-sm btn-icon row-nav-btn" data-target="row-added"
+                                    data-dir="prev" aria-label="Previous">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.5" stroke-linecap="round">
+                                        <polyline points="15,18 9,12 15,6" />
+                                    </svg>
+                                </button>
+                                <button class="btn btn-ghost btn-sm btn-icon row-nav-btn" data-target="row-added"
+                                    data-dir="next" aria-label="Next">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.5" stroke-linecap="round">
+                                        <polyline points="9,18 15,12 9,6" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="scroll-row" id="row-added"></div>
+                    </section>
+
+                    <section class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Most Bookmarked</h2>
+                            <div style="display:flex;align-items:center;gap:16px;">
+                                <button class="btn btn-ghost btn-sm btn-icon row-nav-btn" data-target="row-bookmarked"
+                                    data-dir="prev" aria-label="Previous">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.5" stroke-linecap="round">
+                                        <polyline points="15,18 9,12 15,6" />
+                                    </svg>
+                                </button>
+                                <button class="btn btn-ghost btn-sm btn-icon row-nav-btn" data-target="row-bookmarked"
+                                    data-dir="next" aria-label="Next">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.5" stroke-linecap="round">
+                                        <polyline points="9,18 15,12 9,6" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="scroll-row" id="row-bookmarked"></div>
+                    </section>
+
+                </div>
+
+                <aside>
+                    <div class="sidebar-widget" id="dynamic-sidebar"></div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <a href="/" class="logo" style="margin-bottom:0">
+                <div class="logo-wordmark">
+                    <span class="l">K</span><span class="l">U</span><span class="l">R</span><span
+                        class="l">O</span><span class="l">V</span><span class="l"
+                        style="transform: scaleX(-1); display: inline-block;">E</span><span class="l">X</span><span
+                        class="l">A</span>
+                </div>
+            </a>
+            <p class="footer-brand-desc">Your premium destination for anime and manga. Watch and read thousands of
+                titles in HD &mdash; free, always.</p>
+
+            <div class="footer-links-row">
+                <a href="index.html">Home</a>
+                <a href="browse.html">Browse</a>
+                <a href="schedule.html">Schedule</a>
+                <a href="manga.html">Manga</a>
+            <a href="music.html">Music</a>
+            </div>
+
+            <div class="footer-links-row">
+                <a href="terms.html">Terms of Use</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="dmca.html">DMCA</a>
+            </div>
+
+            <div class="footer-author">
+                <span>Developer: Walter</span>
+                <a href="https://github.com/walterwhite-69" target="_blank" rel="noopener">GitHub: walterwhite-69</a>
+            </div>
+
+            <div class="footer-bottom">
+                <span class="footer-copy">© 2026 Kurovexa. All rights reserved.</span>
+                <span class="footer-disclaimer">Kurovexa does not host any media. All content is sourced from
+                    third-party providers.</span>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toast-container"></div>
+
+    <script defer src="js/api.js?v=123"></script>
+    <script defer src="js/manga.js?v=5"></script>
+    <script defer src="js/auth.js?v=119"></script>
+    <script defer src="js/mobile-nav.js?v=6"></script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+
+</html>

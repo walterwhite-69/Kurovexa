@@ -1,0 +1,70 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "server.py",
+            "use": "@vercel/python"
+        },
+        {
+            "src": "js/**",
+            "use": "@vercel/static"
+        },
+        {
+            "src": "css/**",
+            "use": "@vercel/static"
+        },
+        {
+            "src": "assets/**",
+            "use": "@vercel/static"
+        },
+        {
+            "src": "*.svg",
+            "use": "@vercel/static"
+        },
+        {
+            "src": "favicon.ico",
+            "use": "@vercel/static"
+        },
+        {
+            "src": "*.txt",
+            "use": "@vercel/static"
+        }
+    ],
+    "rewrites": [
+        {
+            "source": "/api/(.*)",
+            "destination": "server.py"
+        },
+        {
+            "source": "/proxy",
+            "destination": "server.py"
+        },
+        {
+            "source": "/proxy/(.*)",
+            "destination": "server.py"
+        },
+        {
+            "source": "/imgproxy",
+            "destination": "server.py"
+        },
+        {
+            "source": "/(.*\\.html)",
+            "destination": "server.py"
+        },
+        {
+            "source": "/",
+            "destination": "server.py"
+        }
+    ],
+    "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "Access-Control-Allow-Origin",
+                    "value": "*"
+                }
+            ]
+        }
+    ]
+}

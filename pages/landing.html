@@ -1,0 +1,2084 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Kurovexa — The Next-Gen Anime Hub</title>
+    <meta name="description"
+        content="Stream thousands of anime series in HD, sync your AniList automatically, pick up exactly where you left off — completely free, forever.">
+    <meta property="og:title" content="Kurovexa — The Next-Gen Anime Hub">
+    <meta property="og:description"
+        content="Stream thousands of anime series in HD, sync your AniList automatically, pick up exactly where you left off — completely free, forever.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#07070f">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="font" type="font/woff2"
+        href="https://fonts.gstatic.com/s/bebasneue/v14/JTUSjIg69CK48gW7PXoo9WlhyTbe.woff2" crossorigin>
+    <style>
+        .hero-wordmark,
+        .logo-wordmark {
+            visibility: hidden;
+        }
+
+        html.fonts-ready .hero-wordmark,
+        html.fonts-ready .logo-wordmark {
+            visibility: visible;
+        }
+    </style>
+    <script>
+        (function () {
+            var done = function () { document.documentElement.classList.add('fonts-ready'); };
+            if (document.fonts && document.fonts.load) {
+                document.fonts.load('1em "Bebas Neue"').then(done).catch(done);
+            } else {
+                done();
+            }
+            setTimeout(done, 1500);
+        })();
+    </script>
+    <link rel="stylesheet" href="css/style.css?v=1002">
+    <link rel="stylesheet" href="css/auth.css?v=108">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <style>
+        body.landing {
+            background: #050507;
+            overflow-x: hidden;
+        }
+
+        .landing-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+            transform: translateZ(0);
+            contain: style;
+        }
+
+        .landing-bg::before,
+        .landing-bg::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .landing-bg::before {
+            width: 900px;
+            height: 900px;
+            top: -280px;
+            left: -220px;
+            background: radial-gradient(circle, rgba(91,33,182,0.38) 0%, rgba(76,29,149,0.15) 45%, transparent 70%);
+        }
+
+        .landing-bg::after {
+            width: 1000px;
+            height: 1000px;
+            top: 30%;
+            right: -300px;
+            background: radial-gradient(circle, rgba(59,7,100,0.30) 0%, rgba(49,10,101,0.10) 45%, transparent 70%);
+        }
+
+        .landing-vignette {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background: radial-gradient(ellipse 90% 75% at 50% 35%, transparent 35%, rgba(0, 0, 0, 0.55) 80%, rgba(0, 0, 0, 0.85) 100%);
+            transform: translateZ(0);
+        }
+
+        .landing-grid {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.014) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.014) 1px, transparent 1px);
+            background-size: 56px 56px;
+            mask-image: radial-gradient(ellipse 65% 55% at 50% 30%, black 25%, transparent 75%);
+            -webkit-mask-image: radial-gradient(ellipse 65% 55% at 50% 30%, black 25%, transparent 75%);
+            pointer-events: none;
+            transform: translateZ(0);
+        }
+
+        .hero-landing {
+            min-height: calc(100vh - var(--header-h));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 24px 100px;
+            position: relative;
+        }
+
+        .hero-inner {
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(124, 58, 237, 0.35);
+            background: rgba(124, 58, 237, 0.08);
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--accent-c2);
+        }
+
+        .hero-eyebrow .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-v2);
+            box-shadow: 0 0 10px var(--accent-v);
+            animation: pulse 1.6s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .hero-wordmark {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 0.28em;
+            line-height: 1;
+        }
+
+        .hero-wordmark .l {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(4.5rem, 14vw, 9rem);
+            font-weight: 400;
+            color: #fff;
+            letter-spacing: 0.01em;
+            background: linear-gradient(180deg, #ffffff 40%, #c4b5fd 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 60px rgba(124, 58, 237, 0.25);
+        }
+
+        .hero-tagline {
+            font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+            color: var(--text-secondary);
+            max-width: 560px;
+            line-height: 1.5;
+        }
+
+        .hero-tagline strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .hero-search {
+            width: 100%;
+            max-width: 580px;
+            position: relative;
+            margin-top: 8px;
+        }
+
+        .hero-search input {
+            width: 100%;
+            padding: 18px 60px 18px 24px;
+            background: rgba(15, 15, 15, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            backdrop-filter: blur(8px);
+            transition: var(--transition);
+        }
+
+        .hero-search input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .hero-search input:focus {
+            border-color: rgba(124, 58, 237, 0.6);
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
+            background: rgba(15, 15, 15, 0.9);
+        }
+
+        .hero-search button {
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--grad-accent);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .hero-search button:hover {
+            transform: translateY(-50%) scale(1.06);
+            box-shadow: 0 0 22px rgba(124, 58, 237, 0.5);
+        }
+
+        .landing-autocomplete {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            right: 0;
+            background: rgba(15, 15, 22, 0.92);
+            border: 1px solid rgba(124, 58, 237, 0.22);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 50;
+            display: block;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px) scale(0.98);
+            pointer-events: none;
+            max-height: min(440px, 70vh);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(124, 58, 237, 0.4) transparent;
+            transition: opacity 0.22s ease, transform 0.22s ease, visibility 0s linear 0.22s;
+        }
+
+        .landing-autocomplete::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .landing-autocomplete::-webkit-scrollbar-thumb {
+            background: rgba(124, 58, 237, 0.35);
+            border-radius: 3px;
+        }
+
+        .landing-autocomplete.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+            transition: opacity 0.22s ease, transform 0.22s ease, visibility 0s linear 0s;
+        }
+
+        .landing-ac-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            transition: background 0.18s ease;
+        }
+
+        .landing-ac-item:last-child {
+            border-bottom: none;
+        }
+
+        .landing-ac-item:hover,
+        .landing-ac-item.active {
+            background: rgba(124, 58, 237, 0.14);
+        }
+
+        .landing-ac-poster {
+            width: 44px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 8px;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .landing-ac-body {
+            flex: 1;
+            min-width: 0;
+            text-align: center;
+        }
+
+        .landing-ac-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .landing-ac-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted, rgba(255, 255, 255, 0.5));
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .landing-ac-meta .dot {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: 0.5;
+        }
+
+        .landing-ac-empty,
+        .landing-ac-loading {
+            padding: 18px 16px;
+            text-align: center;
+            color: var(--text-muted, rgba(255, 255, 255, 0.5));
+            font-size: 0.88rem;
+        }
+
+        .landing-ac-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .landing-ac-spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(124, 58, 237, 0.3);
+            border-top-color: #a78bfa;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            .landing-autocomplete {
+                border-radius: 14px;
+                max-height: min(360px, 60vh);
+            }
+
+            .landing-ac-item {
+                padding: 10px 12px;
+                gap: 10px;
+            }
+
+            .landing-ac-poster {
+                width: 38px;
+                height: 56px;
+            }
+
+            .landing-ac-title {
+                font-size: 0.88rem;
+            }
+
+            .landing-ac-meta {
+                font-size: 0.7rem;
+            }
+        }
+
+        .hero-chips-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            max-width: 660px;
+        }
+
+        .hero-chips-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .hero-chips {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            min-height: 34px;
+            transition: opacity 0.3s ease;
+        }
+
+        .hero-chips.loading {
+            opacity: 0.5;
+        }
+
+        .hero-chip {
+            padding: 7px 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 999px;
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .hero-chip:hover {
+            background: rgba(124, 58, 237, 0.12);
+            border-color: rgba(124, 58, 237, 0.4);
+            color: #fff;
+        }
+
+        .hero-cta-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 8px;
+        }
+
+        .hero-cta-music {
+            background: linear-gradient(135deg, #9d6ef8, #7c3aed 60%, #4c1d95);
+            box-shadow: 0 10px 40px rgba(157, 110, 248, 0.35);
+        }
+
+        .hero-cta-music svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .hero-cta-music:hover {
+            box-shadow: 0 14px 50px rgba(157, 110, 248, 0.55);
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 30px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #7c3aed, #4c1d95);
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.4);
+            transition: var(--transition);
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 50px rgba(124, 58, 237, 0.55);
+        }
+
+        .hero-cta svg {
+            transition: transform 0.25s ease;
+        }
+
+        .hero-cta:hover svg {
+            transform: translateX(4px);
+        }
+
+        .hero-cta-alt {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .hero-cta-alt:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(124, 58, 237, 0.5);
+            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.2);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .hero-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .hero-stat-num {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8rem;
+            color: #fff;
+            line-height: 1;
+            letter-spacing: 0.02em;
+        }
+
+        .hero-stat-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .section-block {
+            padding: 100px 24px;
+            position: relative;
+        }
+
+        .section-block .inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-eyebrow {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--accent-c2);
+            margin-bottom: 18px;
+        }
+
+        .section-h2 {
+            font-size: clamp(2rem, 4vw, 3.4rem);
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+            color: #fff;
+            margin-bottom: 18px;
+        }
+
+        .section-h2 .grad {
+            background: linear-gradient(135deg, #c4b5fd 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-lead {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 620px;
+            line-height: 1.6;
+        }
+
+        .section-head {
+            margin-bottom: 56px;
+            max-width: 760px;
+        }
+
+        .bento {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+        }
+
+        .bento-card {
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 28px;
+            padding: 36px;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            min-height: 240px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--mx, 50%) var(--my, 0%), rgba(124, 58, 237, 0.12), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .bento-card:hover {
+            border-color: rgba(124, 58, 237, 0.35);
+            background: rgba(255, 255, 255, 0.04);
+            transform: translateY(-3px);
+        }
+
+        .bento-card:hover::before {
+            opacity: 1;
+        }
+
+        .bento-card .glow {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .bento-card.purple .glow {
+            width: 320px;
+            height: 320px;
+            top: -120px;
+            right: -120px;
+            background: radial-gradient(circle, rgba(124,58,237,0.55) 0%, rgba(76,29,149,0.20) 45%, transparent 70%);
+        }
+
+        .bento-card.violet .glow {
+            width: 280px;
+            height: 280px;
+            bottom: -120px;
+            left: -100px;
+            background: radial-gradient(circle, rgba(157,110,248,0.42) 0%, rgba(124,58,237,0.14) 45%, transparent 70%);
+        }
+
+        .bento-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: rgba(124, 58, 237, 0.12);
+            border: 1px solid rgba(124, 58, 237, 0.22);
+            color: #c4b5fd;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 22px;
+        }
+
+        .bento-card.muted .bento-icon {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+
+        .bento-h {
+            font-size: 1.55rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 12px;
+            letter-spacing: -0.01em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .bento-card.large .bento-h {
+            font-size: 1.9rem;
+        }
+
+        .bento-p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+            max-width: 420px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .bento .span-7 {
+            grid-column: span 7;
+        }
+
+        .bento .span-5 {
+            grid-column: span 5;
+        }
+
+        .bento .span-6 {
+            grid-column: span 6;
+        }
+
+        .bento .span-4 {
+            grid-column: span 4;
+        }
+
+        .bento .span-8 {
+            grid-column: span 8;
+        }
+
+        .feature-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+        }
+
+        .feature-mini {
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 22px;
+            padding: 28px;
+            transition: var(--transition);
+        }
+
+        .feature-mini:hover {
+            border-color: rgba(124, 58, 237, 0.3);
+            background: rgba(255, 255, 255, 0.04);
+            transform: translateY(-2px);
+        }
+
+        .feature-mini .bento-icon {
+            width: 42px;
+            height: 42px;
+            margin-bottom: 16px;
+        }
+
+        .feature-mini h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .feature-mini p {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+
+        .faq-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        details.faq-item {
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 18px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        details.faq-item[open] {
+            border-color: rgba(124, 58, 237, 0.3);
+            background: rgba(124, 58, 237, 0.04);
+        }
+
+        details.faq-item summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 22px 26px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        details.faq-item summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .faq-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(124, 58, 237, 0.12);
+            border: 1px solid rgba(124, 58, 237, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #c4b5fd;
+            flex-shrink: 0;
+            transition: transform 0.25s ease;
+        }
+
+        details[open] .faq-icon {
+            transform: rotate(45deg);
+        }
+
+        details.faq-item .faq-body {
+            padding: 0 26px 24px;
+            font-size: 0.96rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            overflow: hidden;
+            box-sizing: border-box;
+            will-change: height;
+        }
+
+        body footer {
+            background: transparent !important;
+            border-top: none !important;
+        }
+
+        body #header.scrolled {
+            background: rgba(7, 7, 15, 0.55) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+            backdrop-filter: blur(22px) saturate(140%) !important;
+            -webkit-backdrop-filter: blur(22px) saturate(140%) !important;
+        }
+
+        .landing-auth-nav .btn,
+        .landing-auth-nav a {
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            background: rgba(124, 58, 237, 0.18);
+            border: 1px solid rgba(167, 139, 250, 0.45);
+            color: #fff;
+            padding: 9px 20px;
+            border-radius: 999px;
+            font-weight: 700;
+            transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+            box-shadow: 0 6px 18px rgba(124, 58, 237, 0.18);
+        }
+        .landing-auth-nav .btn:hover,
+        .landing-auth-nav a:hover {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.85), rgba(167, 139, 250, 0.85));
+            border-color: rgba(255, 255, 255, 0.45);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 26px rgba(124, 58, 237, 0.45);
+        }
+
+        .faq-section {
+            text-align: center;
+        }
+
+        .faq-section .section-head {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 80px 24px 120px;
+            position: relative;
+        }
+
+        .cta-card {
+            max-width: 900px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(76, 29, 149, 0.06));
+            border: 1px solid rgba(124, 58, 237, 0.25);
+            border-radius: 32px;
+            padding: 64px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-card::before {
+            content: '';
+            position: absolute;
+            top: -150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(124,58,237,0.22) 0%, rgba(91,33,182,0.08) 40%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .cta-card h2 {
+            position: relative;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .cta-card p {
+            position: relative;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 520px;
+            margin: 0 auto 32px;
+            line-height: 1.55;
+        }
+
+        .cta-card .hero-cta {
+            position: relative;
+        }
+
+        .landing-disclaimer {
+            text-align: center;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 32px auto 0;
+            line-height: 1.55;
+            position: relative;
+        }
+
+        @media (max-width: 900px) {
+
+            .bento .span-7,
+            .bento .span-5,
+            .bento .span-6,
+            .bento .span-4,
+            .bento .span-8 {
+                grid-column: span 12;
+            }
+
+            .feature-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .section-block {
+                padding: 70px 20px;
+            }
+
+            .cta-card {
+                padding: 48px 24px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .feature-row {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-stats {
+                gap: 24px;
+            }
+
+            .bento-card {
+                padding: 28px;
+                min-height: 200px;
+            }
+        }
+
+        /* ── Animated orbs ── */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+            will-change: transform;
+            transform: translateZ(0);
+        }
+        .orb-1 {
+            width: 900px; height: 900px;
+            top: -380px; left: -320px;
+            background: radial-gradient(circle, rgba(124,58,237,0.55) 0%, rgba(76,29,149,0.20) 40%, rgba(49,10,101,0.06) 65%, transparent 100%);
+            opacity: 0.32;
+            animation: orbDrift1 15s ease-in-out infinite;
+        }
+        .orb-2 {
+            width: 720px; height: 720px;
+            top: 25%; right: -310px;
+            background: radial-gradient(circle, rgba(91,33,182,0.48) 0%, rgba(49,10,101,0.16) 40%, rgba(49,10,101,0.04) 65%, transparent 100%);
+            opacity: 0.26;
+            animation: orbDrift2 20s ease-in-out infinite;
+        }
+        .orb-3 {
+            width: 560px; height: 560px;
+            bottom: 8%; left: 3%;
+            background: radial-gradient(circle, rgba(167,139,250,0.30) 0%, rgba(124,58,237,0.09) 40%, transparent 70%, transparent 100%);
+            opacity: 0.20;
+            animation: orbDrift3 25s ease-in-out infinite;
+        }
+        @keyframes orbDrift1 {
+            0%,100% { transform: translate(0,0) scale(1); }
+            30%     { transform: translate(60px,-80px) scale(1.07); }
+            65%     { transform: translate(-38px,58px) scale(0.94); }
+        }
+        @keyframes orbDrift2 {
+            0%,100% { transform: translate(0,0) scale(1); }
+            40%     { transform: translate(-70px,88px) scale(1.05); }
+            75%     { transform: translate(48px,-48px) scale(0.96); }
+        }
+        @keyframes orbDrift3 {
+            0%,100% { transform: translate(0,0) scale(1); }
+            50%     { transform: translate(80px,-60px) scale(1.08); }
+        }
+
+        /* ── Noise texture ── */
+        .noise-layer {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.036;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+            transform: translateZ(0);
+            contain: style;
+        }
+
+        /* ── Wordmark shimmer sweep ── */
+        .hero-wordmark { position: relative; overflow: visible; }
+        .hero-wordmark::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(108deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%);
+            transform: translateX(-110%);
+            animation: wordmarkSweep 5.5s ease-in-out infinite 1s;
+            pointer-events: none;
+            will-change: transform;
+        }
+        @keyframes wordmarkSweep {
+            0%   { transform: translateX(-110%); }
+            35%  { transform: translateX(140%); }
+            100% { transform: translateX(140%); }
+        }
+
+        /* ── Hero eyebrow pill ── */
+        .hero-eyebrow {
+            background: linear-gradient(135deg, rgba(124,58,237,0.14), rgba(157,110,248,0.07)) !important;
+            border-color: rgba(167,139,250,0.42) !important;
+            box-shadow: 0 0 22px rgba(124,58,237,0.13), inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+
+        /* ── Stats enhanced ── */
+        .hero-stats {
+            border-top: 1px solid rgba(255,255,255,0.06) !important;
+            padding-top: 32px;
+        }
+        .hero-stat-num {
+            font-size: 2.2rem !important;
+            background: linear-gradient(160deg, #fff 25%, #c4b5fd 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ── Chip enhanced ── */
+        .hero-chip {
+            background: rgba(124,58,237,0.07) !important;
+            border: 1px solid rgba(124,58,237,0.18) !important;
+        }
+        .hero-chip:hover {
+            background: rgba(124,58,237,0.18) !important;
+            border-color: rgba(167,139,250,0.5) !important;
+            color: #fff !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px rgba(124,58,237,0.25);
+        }
+
+        /* ── Search glassy ── */
+        .hero-search input {
+            background: rgba(6,6,14,0.68) !important;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+        }
+        .hero-search input:focus {
+            box-shadow: 0 0 0 4px rgba(124,58,237,0.22), 0 0 50px rgba(124,58,237,0.12) !important;
+        }
+
+        /* ── Marquee section ── */
+        .marquee-section {
+            overflow: hidden;
+            padding: 0 0 80px;
+            -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
+            content-visibility: auto;
+            contain-intrinsic-size: auto 400px;
+        }
+        .marquee-label-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+        .marquee-label-row::before,
+        .marquee-label-row::after {
+            content: '';
+            height: 1px;
+            width: 72px;
+            background: linear-gradient(90deg, transparent, rgba(124,58,237,0.4));
+        }
+        .marquee-label-row::after {
+            background: linear-gradient(270deg, transparent, rgba(124,58,237,0.4));
+        }
+        .marquee-label {
+            font-size: 0.67rem;
+            font-weight: 700;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        .marquee-rows { display: flex; flex-direction: column; gap: 14px; }
+        .marquee-row {
+            display: flex;
+            gap: 14px;
+            width: max-content;
+            animation: mqLeft 55s linear infinite;
+            will-change: transform;
+            transform: translateZ(0);
+        }
+        .marquee-row.rev { animation: mqRight 62s linear infinite; }
+        @keyframes mqLeft {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        @keyframes mqRight {
+            0%   { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
+        }
+        .marquee-card {
+            flex-shrink: 0;
+            width: 88px; height: 126px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(124,58,237,0.07);
+            border: 1px solid rgba(255,255,255,0.07);
+            display: block;
+            text-decoration: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            cursor: pointer;
+        }
+        .marquee-card:hover {
+            transform: scale(1.1) translateY(-7px);
+            box-shadow: 0 18px 44px rgba(124,58,237,0.5);
+            border-color: rgba(124,58,237,0.55);
+            position: relative;
+            z-index: 5;
+        }
+        .marquee-card img { width: 100%; height: 100%; object-fit: cover; }
+        .marquee-card.skel { animation: mqSkel 1.6s ease-in-out infinite; }
+        @keyframes mqSkel {
+            0%,100% { opacity: 0.25; }
+            50%     { opacity: 0.5; }
+        }
+
+        /* ── Scroll reveal ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(38px);
+            transition: opacity 0.78s cubic-bezier(0.22,1,0.36,1), transform 0.78s cubic-bezier(0.22,1,0.36,1);
+        }
+        .reveal.visible { opacity: 1; transform: none; }
+        .reveal-d1 { transition-delay: 0.08s; }
+        .reveal-d2 { transition-delay: 0.17s; }
+        .reveal-d3 { transition-delay: 0.26s; }
+        .reveal-d4 { transition-delay: 0.35s; }
+
+        /* ── Bento enhanced ── */
+        .bento-card {
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+        .bento-card.large.purple {
+            background: linear-gradient(135deg, rgba(124,58,237,0.14) 0%, rgba(76,29,149,0.07) 100%) !important;
+        }
+        .bento-card.large.violet {
+            background: linear-gradient(135deg, rgba(157,110,248,0.12) 0%, rgba(91,33,182,0.06) 100%) !important;
+        }
+
+        /* ── Bento notif preview ── */
+        .bento-notif {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(124,58,237,0.1);
+            border: 1px solid rgba(124,58,237,0.2);
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-bottom: 22px;
+            font-size: 0.82rem;
+        }
+        .bento-notif-icon {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: rgba(34,197,94,0.15);
+            border: 1px solid rgba(34,197,94,0.3);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            color: #4ade80;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .bento-notif-body { flex: 1; min-width: 0; }
+        .bento-notif-title { color: #fff; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .bento-notif-sub { color: var(--text-secondary); font-size: 0.74rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .bento-notif-time { color: var(--text-muted); font-size: 0.7rem; white-space: nowrap; }
+
+        /* ── Feature mini radial hover ── */
+        .feature-mini { --mx: 50%; --my: 50%; position: relative; overflow: hidden; }
+        .feature-mini::after {
+            content: '';
+            position: absolute; inset: 0;
+            border-radius: 22px;
+            background: radial-gradient(circle at var(--mx) var(--my), rgba(124,58,237,0.09), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .feature-mini:hover::after { opacity: 1; }
+
+        /* ── CTA glow pulse ── */
+        @keyframes ctaGlow {
+            0%,100% { box-shadow: 0 0 0 0 rgba(124,58,237,0); border-color: rgba(124,58,237,0.25); }
+            50%     { box-shadow: 0 0 80px rgba(124,58,237,0.2); border-color: rgba(167,139,250,0.52); }
+        }
+        .cta-card { animation: ctaGlow 5.5s ease-in-out infinite; transform: translateZ(0); }
+
+        /* ── Section divider ── */
+        .section-divider {
+            width: 60px; height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(124,58,237,0.7), transparent);
+            margin: 0 0 18px;
+        }
+
+        @media (max-width: 680px) {
+            .marquee-section { padding-bottom: 50px; }
+            .marquee-card { width: 72px; height: 104px; }
+        }
+        @media (hover: none) {
+            .bento-card::before { display: none !important; }
+            .feature-mini::after { display: none !important; }
+            .hero-chip:hover { transform: none !important; }
+        }
+        .section-block { contain: layout style; }
+        .bento-card { contain: layout style; }
+    </style>
+</head>
+
+<body class="landing">
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="noise-layer"></div>
+    <div class="landing-bg"></div>
+    <div class="landing-grid"></div>
+    <div class="landing-vignette"></div>
+
+    <header id="header">
+        <div class="container" style="display:flex;align-items:center;justify-content:flex-end;">
+            <div class="auth-nav landing-auth-nav" id="auth-nav" style="display:flex !important;"></div>
+        </div>
+    </header>
+
+    <section class="hero-landing">
+        <div class="hero-inner">
+            <div class="hero-eyebrow">
+                <span class="dot"></span>
+                New episodes streaming every day
+            </div>
+            <div class="hero-wordmark">
+                <span class="l">K</span><span class="l">U</span><span class="l">R</span><span class="l">O</span><span
+                    class="l">V</span><span class="l"
+                    style="transform: scaleX(-1); display: inline-block;">E</span><span class="l">X</span><span
+                    class="l">A</span>
+            </div>
+
+            <p class="hero-tagline">
+                The next-gen anime hub. <strong>Sync your AniList</strong>, pick up where you left off, and stream
+                thousands of titles in HD — completely free, forever.
+            </p>
+
+            <form class="hero-search" id="landing-search">
+                <input type="text" id="landing-search-input" placeholder="Search anime, e.g. Frieren, Solo Leveling…"
+                    autocomplete="off" role="combobox" aria-autocomplete="list"
+                    aria-controls="landing-autocomplete" aria-expanded="false">
+                <button type="submit" aria-label="Search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </button>
+                <div class="landing-autocomplete" id="landing-autocomplete" role="listbox"
+                    aria-label="Search suggestions"></div>
+            </form>
+
+            <div class="hero-chips-wrap">
+                <span class="hero-chips-label">Most searched</span>
+                <div class="hero-chips" id="hero-chips">
+                    <a href="browse.html?q=One%20Piece" class="hero-chip">One Piece</a>
+                    <a href="browse.html?q=Solo%20Leveling" class="hero-chip">Solo Leveling</a>
+                    <a href="browse.html?q=Demon%20Slayer" class="hero-chip">Demon Slayer</a>
+                    <a href="browse.html?q=Jujutsu%20Kaisen" class="hero-chip">Jujutsu Kaisen</a>
+                    <a href="browse.html?q=Frieren" class="hero-chip">Frieren</a>
+                    <a href="browse.html?q=Attack%20on%20Titan" class="hero-chip">Attack on Titan</a>
+                </div>
+            </div>
+
+            <div class="hero-cta-row">
+                <a href="index.html" class="hero-cta">
+                    Watch Anime
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                </a>
+                <a href="manga.html" class="hero-cta hero-cta-alt">
+                    Read Manga
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                    </svg>
+                </a>
+                <a href="music.html" class="hero-cta hero-cta-music">
+                    Listen to Music
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18V5l12-2v13" />
+                        <circle cx="6" cy="18" r="3" />
+                        <circle cx="18" cy="16" r="3" />
+                    </svg>
+                </a>
+            </div>
+
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <span class="hero-stat-num" data-count="10000" data-suffix="K+">10K+</span>
+                    <span class="hero-stat-label">Titles</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-num">SUB</span>
+                    <span class="hero-stat-label">&amp; Dub</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-num">1080p</span>
+                    <span class="hero-stat-label">HD Streams</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-num">$0</span>
+                    <span class="hero-stat-label">Forever</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="marquee-section">
+        <div class="marquee-label-row">
+            <span class="marquee-label">10,000+ titles and counting</span>
+        </div>
+        <div class="marquee-rows">
+            <div class="marquee-row" id="mq-row-1"><div class="marquee-card skel"></div><div class="marquee-card skel"></div><div class="marquee-card skel"></div><div class="marquee-card skel"></div><div class="marquee-card skel"></div><div class="marquee-card skel"></div><div class="marquee-card skel"></div><div class="marquee-card skel"></div></div>
+            <div class="marquee-row rev" id="mq-row-2"><div class="marquee-card skel"></div><div class="marquee-card skel"></div><div class="marquee-card skel"></div><div class="marquee-card skel"></div><div class="marquee-card skel"></div><div class="marquee-card skel"></div><div class="marquee-card skel"></div><div class="marquee-card skel"></div></div>
+        </div>
+    </section>
+
+    <section class="section-block" style="content-visibility:auto;contain-intrinsic-size:auto 620px;">
+        <div class="inner">
+            <div class="section-head reveal">
+                <span class="section-eyebrow">Built for fans</span>
+                <h2 class="section-h2">More than just <span class="grad">streaming.</span></h2>
+                <p class="section-lead">The features power users actually want — sync your lists, organise your library,
+                    and never lose your place again.</p>
+            </div>
+
+            <div class="bento">
+                <div class="bento-card large purple span-7 reveal reveal-d1">
+                    <span class="glow"></span>
+                    <div class="bento-notif">
+                        <div class="bento-notif-icon">✓</div>
+                        <div class="bento-notif-body">
+                            <div class="bento-notif-title">Synced to AniList</div>
+                            <div class="bento-notif-sub">Frieren · Episode 28 · Score updated</div>
+                        </div>
+                        <span class="bento-notif-time">Just now</span>
+                    </div>
+                    <div class="bento-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12a9 9 0 1 1-3-6.7" />
+                            <polyline points="21 4 21 10 15 10" />
+                        </svg>
+                    </div>
+                    <h3 class="bento-h">AniList Sync</h3>
+                    <p class="bento-p">Connect your AniList account once. We update your progress, scores and lists
+                        automatically as you watch — no manual tracking ever again.</p>
+                </div>
+
+                <div class="bento-card muted span-5 reveal reveal-d2">
+                    <div class="bento-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <polygon points="10 8 16 12 10 16 10 8" />
+                        </svg>
+                    </div>
+                    <h3 class="bento-h">Smart Resume</h3>
+                    <p class="bento-p">Pause on your phone, finish on your laptop. Every episode and timestamp travels
+                        with you across devices.</p>
+                </div>
+
+                <div class="bento-card muted span-5 reveal reveal-d2">
+                    <div class="bento-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="bento-h">Spoiler-Safe Talk</h3>
+                    <p class="bento-p">React to every episode with comments and GIFs. Built-in spoiler tags keep the
+                        conversation safe for everyone.</p>
+                </div>
+
+                <div class="bento-card large violet span-7 reveal reveal-d3">
+                    <span class="glow"></span>
+                    <div class="bento-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                    </div>
+                    <h3 class="bento-h">Make It Yours</h3>
+                    <p class="bento-p">Hundreds of avatars and banners straight from your favourite series. Build a
+                        profile that actually feels like you.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-block" style="content-visibility:auto;contain-intrinsic-size:auto 520px;">
+        <div class="inner">
+            <div class="section-head reveal">
+                <span class="section-eyebrow">The standard</span>
+                <h2 class="section-h2">The way streaming <br><span class="grad">should feel.</span></h2>
+                <p class="section-lead">A premium, high-performance player paired with the cleanest UI in the space —
+                    none of the ads, popups or paywalls you're used to.</p>
+            </div>
+
+            <div class="feature-row">
+                <div class="feature-mini reveal reveal-d1">
+                    <div class="bento-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                        </svg>
+                    </div>
+                    <h4>Zero Buffer</h4>
+                    <p>Adaptive playback up to 1080p, optimised for instant start even on slower connections.</p>
+                </div>
+
+                <div class="feature-mini reveal reveal-d2">
+                    <div class="bento-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m5 8 6 6" />
+                            <path d="m4 14 6-6 2-3" />
+                            <path d="M2 5h12" />
+                            <path d="M7 2h1" />
+                            <path d="m22 22-5-10-5 10" />
+                            <path d="M14 18h6" />
+                        </svg>
+                    </div>
+                    <h4>Sub &amp; Dub</h4>
+                    <p>Both English subtitles and dubs available on every supported title — switch in one tap.</p>
+                </div>
+
+                <div class="feature-mini reveal reveal-d3">
+                    <div class="bento-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                        </svg>
+                    </div>
+                    <h4>Free, Forever</h4>
+                    <p>No subscriptions, no hidden fees, no card required. Not even an email to start watching.</p>
+                </div>
+
+                <div class="feature-mini reveal reveal-d4">
+                    <div class="bento-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                            <line x1="8" y1="21" x2="16" y2="21" />
+                            <line x1="12" y1="17" x2="12" y2="21" />
+                        </svg>
+                    </div>
+                    <h4>Every Device</h4>
+                    <p>Looks and works the same on mobile, tablet and desktop — no app required, just open the site.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-block faq-section" style="content-visibility:auto;contain-intrinsic-size:auto 700px;">
+        <div class="inner">
+            <div class="section-head reveal">
+                <span class="section-eyebrow">FAQ</span>
+                <h2 class="section-h2">Common questions.</h2>
+                <p class="section-lead" style="margin-left:auto;margin-right:auto;">Everything you need to know before
+                    you hit play.</p>
+            </div>
+
+            <div class="faq-list">
+                <details class="faq-item">
+                    <summary>
+                        <span>Is Kurovexa really free?</span>
+                        <span class="faq-icon">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                        </span>
+                    </summary>
+                    <div class="faq-body">Yes — completely. No subscriptions, no hidden fees, no credit card required.
+                        We don't even ask for an email if you just want to watch.</div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>
+                        <span>Do I need to create an account?</span>
+                        <span class="faq-icon">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                        </span>
+                    </summary>
+                    <div class="faq-body">No. You can browse and stream anonymously. An account just unlocks AniList
+                        sync, watch history across devices, episode comments and a custom profile.</div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>
+                        <span>How does AniList Sync work?</span>
+                        <span class="faq-icon">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                        </span>
+                    </summary>
+                    <div class="faq-body">Connect your AniList from the profile page. Every episode you finish on
+                        Kurovexa updates your AniList progress, scores and status automatically — no manual updates
+                        ever.</div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>
+                        <span>What video quality do you offer?</span>
+                        <span class="faq-icon">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                        </span>
+                    </summary>
+                    <div class="faq-body">Adaptive quality from 360p up to full HD 1080p. The player picks the right one
+                        for your connection automatically, and you can override it anytime from the player settings.
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>
+                        <span>Where does the content come from?</span>
+                        <span class="faq-icon">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                        </span>
+                    </summary>
+                    <div class="faq-body">Kurovexa is an indexer — we don't host any video files ourselves. Everything
+                        is sourced from public third-party providers and embedded in our player. Check the DMCA page for
+                        more details.</div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>
+                        <span>Is Kurovexa safe?</span>
+                        <span class="faq-icon">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                        </span>
+                    </summary>
+                    <div class="faq-body">Yes. No popups, no redirects, no shady ads. The site itself is clean — we
+                        recommend keeping a basic ad-blocker on for any embedded player layer, just to be safe.</div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section" style="content-visibility:auto;contain-intrinsic-size:auto 380px;">
+        <div class="cta-card">
+            <h2>Ready to dive in?</h2>
+            <p>Pick up your next show or chapter — sync your AniList, swipe through panels, and stream thousands of
+                titles. It's free, and it always will be.</p>
+            <div class="hero-cta-row" style="justify-content:center;">
+                <a href="index.html" class="hero-cta">
+                    Watch Anime
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                </a>
+                <a href="manga.html" class="hero-cta hero-cta-alt">
+                    Read Manga
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                    </svg>
+                </a>
+                <a href="music.html" class="hero-cta hero-cta-music">
+                    Listen to Music
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18V5l12-2v13" />
+                        <circle cx="6" cy="18" r="3" />
+                        <circle cx="18" cy="16" r="3" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+        <p class="landing-disclaimer">Kurovexa does not host any video files. All content is sourced from third-party
+            providers. Legal issues should be taken up directly with them — see the DMCA page for details.</p>
+    </section>
+
+    <footer style="content-visibility:auto;contain-intrinsic-size:auto 320px;">
+        <div class="container footer-content">
+            <a href="/" class="logo" style="margin-bottom:0">
+                <div class="logo-wordmark">
+                    <span class="l">K</span><span class="l">U</span><span class="l">R</span><span
+                        class="l">O</span><span class="l">V</span><span class="l"
+                        style="transform: scaleX(-1); display: inline-block;">E</span><span class="l">X</span><span
+                        class="l">A</span>
+                </div>
+            </a>
+            <p class="footer-brand-desc">Your premium destination for anime streaming. Watch thousands of titles subbed
+                and dubbed in crystal-clear HD &mdash; free, always.</p>
+
+            <div class="footer-links-row">
+                <a href="index.html">Home</a>
+                <a href="browse.html">Browse</a>
+                <a href="schedule.html">Schedule</a>
+            <a href="manga.html">Manga</a>
+            <a href="music.html">Music</a>
+            </div>
+
+            <div class="footer-links-row">
+                <a href="terms.html">Terms of Use</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="dmca.html">DMCA</a>
+            </div>
+
+            <div class="footer-author">
+                <span>Developer: Walter</span>
+                <a href="https://github.com/walterwhite-69" target="_blank" rel="noopener">GitHub: walterwhite-69</a>
+            </div>
+
+            <div class="footer-bottom">
+                <span class="footer-copy">© 2026 Kurovexa. All rights reserved.</span>
+                <span class="footer-disclaimer">Kurovexa does not store any video files. All content is sourced from
+                    third-party providers.</span>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toast-container"></div>
+
+    <script>
+        (function () {
+            const form = document.getElementById('landing-search');
+            const input = document.getElementById('landing-search-input');
+            if (form && input) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const q = input.value.trim();
+                    if (q) {
+                        window.location.href = 'browse.html?q=' + encodeURIComponent(q);
+                    } else {
+                        window.location.href = 'browse.html';
+                    }
+                });
+            }
+
+            if (window.matchMedia('(hover: hover)').matches) {
+                document.querySelectorAll('.bento-card').forEach(card => {
+                    let _raf = null;
+                    card.addEventListener('mousemove', e => {
+                        if (_raf) return;
+                        _raf = requestAnimationFrame(() => {
+                            const r = card.getBoundingClientRect();
+                            card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+                            card.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+                            _raf = null;
+                        });
+                    });
+                });
+            }
+
+            const chipsEl = document.getElementById('hero-chips');
+            if (chipsEl) {
+                chipsEl.classList.add('loading');
+                fetch('/api/most-searched')
+                    .then(r => r.json())
+                    .then(d => {
+                        const list = (d && d.keywords) ? d.keywords : [];
+                        if (list.length) {
+                            chipsEl.innerHTML = list.slice(0, 8).map(k => {
+                                const safe = k.replace(/[<>&"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
+                                return '<a href="browse.html?q=' + encodeURIComponent(k) + '" class="hero-chip">' + safe + '</a>';
+                            }).join('');
+                        }
+                    })
+                    .catch(() => { })
+                    .finally(() => chipsEl.classList.remove('loading'));
+            }
+
+            const header = document.getElementById('header');
+            const updateHeaderScrolled = () => {
+                if (!header) return;
+                if (window.scrollY > 12) header.classList.add('scrolled');
+                else header.classList.remove('scrolled');
+            };
+            updateHeaderScrolled();
+            window.addEventListener('scroll', updateHeaderScrolled, { passive: true });
+
+            const mBtn = document.getElementById('mobile-menu-btn');
+            const mNav = document.getElementById('mobile-nav');
+            if (mBtn && mNav) {
+                mBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    mBtn.classList.toggle('open');
+                    mNav.classList.toggle('open');
+                });
+                mNav.addEventListener('click', (e) => {
+                    if (e.target.closest('a')) {
+                        mBtn.classList.remove('open');
+                        mNav.classList.remove('open');
+                    }
+                });
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('#header')) {
+                        mBtn.classList.remove('open');
+                        mNav.classList.remove('open');
+                    }
+                });
+            }
+        })();
+    </script>
+
+    <script defer src="js/api.js?v=123"></script>
+    <script defer src="js/auth.js?v=119"></script>
+    <script defer src="js/mobile-nav.js?v=6"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const input = document.getElementById('landing-search-input');
+            const box = document.getElementById('landing-autocomplete');
+            const form = document.getElementById('landing-search');
+            if (!input || !box || !form || !window.Kurovexa || typeof window.Kurovexa.suggest !== 'function') return;
+
+            let timer = null;
+            let reqCounter = 0;
+            let items = [];
+            let activeIdx = -1;
+
+            const escHtml = (s) => String(s == null ? '' : s).replace(/[<>&"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
+
+            const closeBox = () => {
+                box.classList.remove('open');
+                input.setAttribute('aria-expanded', 'false');
+                activeIdx = -1;
+            };
+
+            const openBox = () => {
+                box.classList.add('open');
+                input.setAttribute('aria-expanded', 'true');
+            };
+
+            const renderLoading = () => {
+                box.innerHTML = '<div class="landing-ac-loading"><span class="landing-ac-spinner"></span><span>Searching…</span></div>';
+                openBox();
+            };
+
+            const renderEmpty = (q) => {
+                box.innerHTML = '<div class="landing-ac-empty">No matches for "' + escHtml(q) + '"</div>';
+                openBox();
+            };
+
+            const renderItems = (list) => {
+                items = list.slice(0, 7);
+                box.innerHTML = items.map((a, i) => {
+                    const t = typeof a.title === 'string' ? a.title : (a.title && (a.title.english || a.title.romaji)) || 'Unknown';
+                    const poster = a.poster || (a.coverImage && a.coverImage.large) || '';
+                    const genre = (Array.isArray(a.genres) && a.genres[0]) || a.format || a.type || '';
+                    const yr = a.year || a.seasonYear || '';
+                    const meta = [genre, yr].filter(Boolean);
+                    return '<a class="landing-ac-item" role="option" data-idx="' + i + '" href="info.html?id=' + encodeURIComponent(a.id) + '">'
+                        + (poster ? '<img class="landing-ac-poster" src="' + escHtml(poster) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : '<div class="landing-ac-poster"></div>')
+                        + '<div class="landing-ac-body">'
+                        + '<div class="landing-ac-title">' + escHtml(t) + '</div>'
+                        + (meta.length ? '<div class="landing-ac-meta">' + meta.map(escHtml).join('<span class="dot"></span>') + '</div>' : '')
+                        + '</div>'
+                        + '</a>';
+                }).join('');
+                openBox();
+            };
+
+            const setActive = (idx) => {
+                const nodes = box.querySelectorAll('.landing-ac-item');
+                if (!nodes.length) return;
+                if (idx < 0) idx = nodes.length - 1;
+                if (idx >= nodes.length) idx = 0;
+                nodes.forEach((n, i) => n.classList.toggle('active', i === idx));
+                activeIdx = idx;
+                nodes[idx].scrollIntoView({ block: 'nearest' });
+            };
+
+            input.addEventListener('input', () => {
+                const q = input.value.trim();
+                clearTimeout(timer);
+                if (q.length < 2) { closeBox(); return; }
+                const reqId = ++reqCounter;
+                renderLoading();
+                timer = setTimeout(async () => {
+                    try {
+                        const data = await window.Kurovexa.suggest(q);
+                        if (reqId !== reqCounter) return;
+                        const filtered = Array.isArray(data) ? data : (data && (data.suggestions || data.results || data.data)) || [];
+                        if (!filtered.length) { renderEmpty(q); return; }
+                        renderItems(filtered);
+                    } catch {
+                        if (reqId === reqCounter) closeBox();
+                    }
+                }, 280);
+            });
+
+            input.addEventListener('keydown', (e) => {
+                const isOpen = box.classList.contains('open');
+                if (e.key === 'ArrowDown') {
+                    if (isOpen && items.length) { e.preventDefault(); setActive(activeIdx + 1); }
+                } else if (e.key === 'ArrowUp') {
+                    if (isOpen && items.length) { e.preventDefault(); setActive(activeIdx - 1); }
+                } else if (e.key === 'Enter') {
+                    if (isOpen && activeIdx >= 0 && items[activeIdx]) {
+                        e.preventDefault();
+                        window.location.href = 'info.html?id=' + encodeURIComponent(items[activeIdx].id);
+                    }
+                } else if (e.key === 'Escape') {
+                    closeBox();
+                }
+            });
+
+            input.addEventListener('focus', () => {
+                if (input.value.trim().length >= 2 && box.innerHTML) openBox();
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#landing-search')) closeBox();
+            });
+        });
+
+        (function () {
+            const EASE_OPEN = 'cubic-bezier(0.22, 1, 0.36, 1)';
+            const EASE_CLOSE = 'cubic-bezier(0.4, 0, 0.2, 1)';
+            const DUR_OPEN = 0.36;
+            const DUR_CLOSE = 0.28;
+            const items = document.querySelectorAll('details.faq-item');
+            items.forEach(d => {
+                const summary = d.querySelector('summary');
+                const body = d.querySelector('.faq-body');
+                if (!summary || !body) return;
+
+                body.style.willChange = 'height, padding, opacity';
+                if (!d.open) {
+                    body.style.height = '0px';
+                    body.style.paddingTop = '0px';
+                    body.style.paddingBottom = '0px';
+                    body.style.opacity = '0';
+                }
+
+                const openPadTop = '0px';
+                const openPadBottom = '24px';
+
+                const setTransition = (opening) => {
+                    const dur = opening ? DUR_OPEN : DUR_CLOSE;
+                    const ease = opening ? EASE_OPEN : EASE_CLOSE;
+                    body.style.transition =
+                        `height ${dur}s ${ease}, ` +
+                        `padding-top ${dur}s ${ease}, ` +
+                        `padding-bottom ${dur}s ${ease}, ` +
+                        `opacity ${(dur * 0.7).toFixed(3)}s ${ease}`;
+                };
+
+                summary.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (d.dataset.animating === '1') return;
+                    d.dataset.animating = '1';
+
+                    if (d.open) {
+
+                        const h = body.scrollHeight;
+                        body.style.transition = 'none';
+                        body.style.height = h + 'px';
+                        body.style.paddingTop = openPadTop;
+                        body.style.paddingBottom = openPadBottom;
+                        body.style.opacity = '1';
+
+                        body.offsetHeight;
+                        setTransition(false);
+                        requestAnimationFrame(() => {
+                            body.style.height = '0px';
+                            body.style.paddingTop = '0px';
+                            body.style.paddingBottom = '0px';
+                            body.style.opacity = '0';
+                        });
+                        const onEnd = (ev) => {
+                            if (ev.propertyName !== 'height') return;
+                            body.removeEventListener('transitionend', onEnd);
+                            d.open = false;
+                            d.dataset.animating = '0';
+                        };
+                        body.addEventListener('transitionend', onEnd);
+                    } else {
+
+                        d.open = true;
+                        body.style.transition = 'none';
+                        body.style.height = '0px';
+                        body.style.paddingTop = '0px';
+                        body.style.paddingBottom = '0px';
+                        body.style.opacity = '0';
+
+                        const probePadTop = body.style.paddingTop;
+                        const probePadBottom = body.style.paddingBottom;
+                        body.style.paddingTop = openPadTop;
+                        body.style.paddingBottom = openPadBottom;
+                        body.style.height = 'auto';
+                        const target = body.scrollHeight;
+                        body.style.height = '0px';
+                        body.style.paddingTop = probePadTop;
+                        body.style.paddingBottom = probePadBottom;
+
+                        body.offsetHeight;
+                        setTransition(true);
+                        requestAnimationFrame(() => {
+                            body.style.height = target + 'px';
+                            body.style.paddingTop = openPadTop;
+                            body.style.paddingBottom = openPadBottom;
+                            body.style.opacity = '1';
+                        });
+                        const onEnd = (ev) => {
+                            if (ev.propertyName !== 'height') return;
+                            body.removeEventListener('transitionend', onEnd);
+                            body.style.height = '';
+                            body.style.opacity = '';
+                            d.dataset.animating = '0';
+                        };
+                        body.addEventListener('transitionend', onEnd);
+                    }
+                });
+            });
+        })();
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+
+    <script>
+    /* ── Scroll reveal ── */
+    (function () {
+        if (!('IntersectionObserver' in window)) {
+            document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+            return;
+        }
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    io.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    })();
+
+    /* ── Feature mini radial mouse tracking ── */
+    if (window.matchMedia('(hover: hover)').matches) {
+        document.querySelectorAll('.feature-mini').forEach(el => {
+            let _raf = null;
+            el.addEventListener('mousemove', e => {
+                if (_raf) return;
+                _raf = requestAnimationFrame(() => {
+                    const r = el.getBoundingClientRect();
+                    el.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+                    el.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+                    _raf = null;
+                });
+            });
+        });
+    }
+
+    /* ── Marquee pause-on-hover ── */
+    document.querySelectorAll('.marquee-row').forEach(row => {
+        row.addEventListener('mouseenter', () => { row.style.animationPlayState = 'paused'; });
+        row.addEventListener('mouseleave', () => { row.style.animationPlayState = 'running'; });
+    });
+
+    /* ── Pause marquee when scrolled off-screen to save GPU ── */
+    if ('IntersectionObserver' in window) {
+        const mqIO = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                e.target.style.animationPlayState = e.isIntersecting ? 'running' : 'paused';
+            });
+        }, { rootMargin: '120px' });
+        document.querySelectorAll('.marquee-row').forEach(row => mqIO.observe(row));
+    }
+
+    /* ── Marquee: load real anime covers ── */
+    function initMarquee() {
+        const row1 = document.getElementById('mq-row-1');
+        const row2 = document.getElementById('mq-row-2');
+        if (!row1 || !row2 || !window.Kurovexa) return;
+
+        const esc = s => String(s == null ? '' : s).replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' }[c]));
+
+        const makeCards = (list) => {
+            const doubled = [...list, ...list];
+            return doubled.map(a => {
+                const img = (a.coverImage && (a.coverImage.large || a.coverImage.medium)) || '';
+                const id = a.id || '';
+                const title = esc(a.title && (a.title.english || a.title.romaji) || '');
+                return `<a class="marquee-card" href="info.html?id=${id}" title="${title}">${img ? `<img src="${esc(img)}" alt="${title}" loading="lazy">` : ''}</a>`;
+            }).join('');
+        };
+
+        Promise.all([
+            Kurovexa.trending(1, 20).catch(() => null),
+            Kurovexa.popular(1, 20).catch(() => null)
+        ]).then(([d1, d2]) => {
+            const list1 = (Array.isArray(d1) ? d1 : (d1 && (d1.results || d1.data) || [])).filter(a => a && !a.isAdult).slice(0, 18);
+            const list2 = (Array.isArray(d2) ? d2 : (d2 && (d2.results || d2.data) || [])).filter(a => a && !a.isAdult).slice(0, 18);
+            if (list1.length) row1.innerHTML = makeCards(list1);
+            if ((list2.length || list1.length)) row2.innerHTML = makeCards(list2.length ? list2 : list1.slice().reverse());
+        }).catch(() => {});
+    }
+
+    /* Wait for api.js to expose Kurovexa */
+    (function waitApi(n) {
+        if (window.Kurovexa && typeof Kurovexa.trending === 'function') {
+            initMarquee();
+        } else if (n < 50) {
+            setTimeout(() => waitApi(n + 1), n < 8 ? 40 : 200);
+        }
+    })(0);
+    </script>
+</body>
+
+</html>

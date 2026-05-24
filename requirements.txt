@@ -1,0 +1,10 @@
+flask
+flask-cors
+flask-limiter
+bcrypt
+pyjwt
+python-dotenv
+requests
+urllib3
+cryptography
+brotli

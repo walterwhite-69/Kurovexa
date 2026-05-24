@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Kurovexa</title>
+    <link rel="stylesheet" href="css/style.css?v=1002">
+    <link rel="stylesheet" href="css/auth.css?v=108">
+    <link rel="stylesheet" href="css/profile.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <style>
+        .guest-signin-banner { max-width: 1200px; margin: 0 auto; padding: 0 20px 40px; }
+        .guest-signin-card {
+            background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(157,110,248,0.08));
+            border: 1px solid rgba(124,58,237,0.3);
+            border-radius: 16px;
+            padding: 32px 36px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .guest-signin-text h2 { font-family:'Outfit',sans-serif; font-size:1.3rem; font-weight:800; color:#fff; margin:0 0 6px; }
+        .guest-signin-text p { font-size:0.88rem; color:rgba(255,255,255,0.55); margin:0; }
+        .guest-signin-actions { display:flex; gap:10px; flex-shrink:0; }
+        .guest-btn-signin {
+            padding: 11px 24px; border-radius:10px; border:none;
+            background: linear-gradient(135deg, #7c3aed, #9d6ef8);
+            color:#fff; font-weight:700; font-size:0.9rem; cursor:pointer;
+            font-family:'Outfit',sans-serif; transition:opacity 0.15s ease;
+        }
+        .guest-btn-signin:hover { opacity:0.88; }
+        .guest-btn-register {
+            padding: 11px 24px; border-radius:10px;
+            border: 1.5px solid rgba(255,255,255,0.15);
+            background:transparent; color:rgba(255,255,255,0.8);
+            font-weight:600; font-size:0.9rem; cursor:pointer;
+            font-family:'Outfit',sans-serif; transition:all 0.15s ease;
+        }
+        .guest-btn-register:hover { background:rgba(255,255,255,0.08); color:#fff; }
+        .kv-list-wrap { max-width:1200px; margin:0 auto; padding:0 20px 60px; }
+        .kv-list-heading {
+            font-family:'Outfit',sans-serif; font-size:1.4rem; font-weight:800;
+            color:#fff; margin:0 0 20px; display:flex; align-items:center; gap:12px;
+        }
+        .kv-list-heading::before {
+            content:''; width:4px; height:22px; border-radius:4px;
+            background:#7c3aed; display:inline-block;
+        }
+        .kv-list-heading span { font-size:0.75rem; font-weight:600; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:0.1em; }
+        .kv-list-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:16px; }
+        .kv-list-card { text-decoration:none; color:inherit; display:block; }
+        .kv-list-poster {
+            width:100%; aspect-ratio:2/3; border-radius:10px; overflow:hidden;
+            background:#1a1a1a; border:1px solid rgba(255,255,255,0.06); position:relative;
+        }
+        .kv-list-poster img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.3s ease; }
+        .kv-list-card:hover .kv-list-poster img { transform:scale(1.05); }
+        .kv-list-status-badge {
+            position:absolute; bottom:6px; left:6px; font-size:0.65rem; font-weight:700;
+            padding:3px 7px; border-radius:5px; text-transform:uppercase; letter-spacing:0.05em;
+            background:rgba(0,0,0,0.75); color:#fff; backdrop-filter:blur(4px);
+        }
+        .kv-list-status-badge.watching { background:rgba(34,197,94,0.85); }
+        .kv-list-status-badge.planning { background:rgba(59,130,246,0.85); }
+        .kv-list-status-badge.completed { background:rgba(124,58,237,0.85); }
+        .kv-list-status-badge.dropped { background:rgba(239,68,68,0.75); }
+        .kv-list-status-badge.paused { background:rgba(234,179,8,0.85); color:#000; }
+        .kv-list-title {
+            font-size:0.78rem; font-weight:700; color:#fff; margin:7px 0 0;
+            line-height:1.3; display:-webkit-box; -webkit-line-clamp:2;
+            -webkit-box-orient:vertical; overflow:hidden;
+        }
+        .kv-list-empty { grid-column:1/-1; text-align:center; padding:40px 20px; color:rgba(255,255,255,0.4); font-size:0.9rem; line-height:1.6; }
+        .ph-confirm-overlay {
+            position:fixed; inset:0; z-index:1200;
+            background:rgba(0,0,0,0.72); backdrop-filter:blur(6px);
+            display:flex; align-items:center; justify-content:center;
+            opacity:0; visibility:hidden;
+            transition:opacity 0.18s ease, visibility 0s linear 0.18s;
+        }
+        .ph-confirm-overlay.open {
+            opacity:1; visibility:visible;
+            transition:opacity 0.18s ease;
+        }
+        .ph-confirm-card {
+            background:#161622; border:1px solid rgba(255,255,255,0.1);
+            border-radius:16px; padding:28px 28px 24px;
+            width:min(360px, 90vw); box-shadow:0 24px 64px rgba(0,0,0,0.7);
+            transform:translateY(12px); transition:transform 0.18s ease;
+        }
+        .ph-confirm-overlay.open .ph-confirm-card { transform:translateY(0); }
+        .ph-confirm-icon {
+            width:44px; height:44px; border-radius:50%;
+            background:rgba(239,68,68,0.12); border:1.5px solid rgba(239,68,68,0.3);
+            display:flex; align-items:center; justify-content:center; margin:0 0 16px;
+        }
+        .ph-confirm-icon svg { width:20px; height:20px; stroke:#f87171; }
+        .ph-confirm-title {
+            font-family:'Outfit',sans-serif; font-size:1.05rem; font-weight:800;
+            color:#fff; margin:0 0 6px;
+        }
+        .ph-confirm-sub {
+            font-size:0.83rem; color:rgba(255,255,255,0.45); margin:0 0 24px; line-height:1.5;
+        }
+        .ph-confirm-actions { display:flex; gap:10px; justify-content:flex-end; }
+        .ph-confirm-cancel {
+            padding:9px 20px; border-radius:9px;
+            border:1.5px solid rgba(255,255,255,0.12);
+            background:transparent; color:rgba(255,255,255,0.7);
+            font-size:0.85rem; font-weight:600; cursor:pointer;
+            font-family:'Outfit',sans-serif; transition:all 0.15s ease;
+        }
+        .ph-confirm-cancel:hover { background:rgba(255,255,255,0.07); color:#fff; }
+        .ph-confirm-ok {
+            padding:9px 20px; border-radius:9px; border:none;
+            background:linear-gradient(135deg,#dc2626,#ef4444);
+            color:#fff; font-size:0.85rem; font-weight:700; cursor:pointer;
+            font-family:'Outfit',sans-serif; transition:opacity 0.15s ease;
+        }
+        .ph-confirm-ok:hover { opacity:0.85; }
+        .kv-view-all-wrap { text-align:center; margin-top:24px; }
+        .kv-view-all-btn {
+            padding:10px 32px; border-radius:10px;
+            border:1.5px solid rgba(124,58,237,0.4);
+            background:rgba(124,58,237,0.08); color:#c4b5fd;
+            font-size:0.85rem; font-weight:700; cursor:pointer;
+            font-family:'Outfit',sans-serif; transition:all 0.18s ease;
+            letter-spacing:0.01em;
+        }
+        .kv-view-all-btn:hover { background:rgba(124,58,237,0.22); border-color:rgba(124,58,237,0.75); color:#fff; }
+
+        .settings-section { max-width:1200px; margin:0 auto; padding:0 20px 60px; }
+        .settings-card { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:14px; overflow:hidden; }
+        .settings-row { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 22px; flex-wrap:wrap; }
+        .settings-row + .settings-row { border-top:1px solid rgba(255,255,255,0.05); }
+        .settings-row-name { font-size:0.9rem; font-weight:700; color:#fff; margin:0 0 3px; }
+        .settings-row-desc { font-size:0.78rem; color:rgba(255,255,255,0.4); margin:0; }
+        .settings-row-right { display:flex; align-items:center; gap:14px; flex-shrink:0; }
+        .settings-server-val { font-size:0.85rem; font-weight:600; color:#c4b5fd; }
+        .settings-change-btn {
+            padding:7px 18px; border-radius:8px; border:1.5px solid rgba(124,58,237,0.35);
+            background:rgba(124,58,237,0.08); color:#c4b5fd; font-size:0.82rem; font-weight:700;
+            cursor:pointer; font-family:'Outfit',sans-serif; transition:all 0.15s ease;
+        }
+        .settings-change-btn:hover { background:rgba(124,58,237,0.2); border-color:rgba(124,58,237,0.65); color:#fff; }
+        .srv-modal-overlay {
+            position:fixed; inset:0; z-index:1300;
+            background:rgba(0,0,0,0.75); backdrop-filter:blur(8px);
+            display:flex; align-items:center; justify-content:center;
+            opacity:0; visibility:hidden; padding:16px;
+            transition:opacity 0.18s ease, visibility 0s linear 0.18s;
+        }
+        .srv-modal-overlay.open { opacity:1; visibility:visible; transition:opacity 0.18s ease; }
+        .srv-modal-card {
+            background:#161622; border:1px solid rgba(255,255,255,0.1); border-radius:18px;
+            width:min(480px,100%); max-height:88vh; display:flex; flex-direction:column;
+            box-shadow:0 32px 80px rgba(0,0,0,0.75);
+            transform:translateY(14px); transition:transform 0.18s ease;
+        }
+        .srv-modal-overlay.open .srv-modal-card { transform:translateY(0); }
+        .srv-modal-header {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:20px 22px 16px; border-bottom:1px solid rgba(255,255,255,0.07); flex-shrink:0;
+        }
+        .srv-modal-title { font-family:'Outfit',sans-serif; font-size:1.05rem; font-weight:800; color:#fff; margin:0; }
+        .srv-modal-close {
+            width:30px; height:30px; border-radius:50%; border:none;
+            background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.6);
+            font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;
+            transition:all 0.15s ease; line-height:1;
+        }
+        .srv-modal-close:hover { background:rgba(255,255,255,0.15); color:#fff; }
+        .srv-modal-body { overflow-y:auto; flex:1; padding:8px 10px; }
+        .srv-modal-body::-webkit-scrollbar { width:4px; }
+        .srv-modal-body::-webkit-scrollbar-track { background:transparent; }
+        .srv-modal-body::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.12); border-radius:2px; }
+        .srv-modal-footer {
+            display:flex; gap:10px; justify-content:flex-end;
+            padding:14px 20px; border-top:1px solid rgba(255,255,255,0.07); flex-shrink:0;
+        }
+        .srv-modal-cancel {
+            padding:9px 20px; border-radius:9px; border:1.5px solid rgba(255,255,255,0.12);
+            background:transparent; color:rgba(255,255,255,0.7); font-size:0.85rem; font-weight:600;
+            cursor:pointer; font-family:'Outfit',sans-serif; transition:all 0.15s ease;
+        }
+        .srv-modal-cancel:hover { background:rgba(255,255,255,0.07); color:#fff; }
+        .srv-modal-save {
+            padding:9px 24px; border-radius:9px; border:none;
+            background:linear-gradient(135deg,#7c3aed,#9d6ef8); color:#fff;
+            font-size:0.85rem; font-weight:700; cursor:pointer;
+            font-family:'Outfit',sans-serif; transition:opacity 0.15s ease;
+        }
+        .srv-modal-save:hover { opacity:0.88; }
+        .srv-item {
+            display:flex; align-items:center; gap:14px; padding:11px 12px;
+            border-radius:10px; cursor:pointer; transition:background 0.12s ease; margin-bottom:2px;
+        }
+        .srv-item:hover { background:rgba(255,255,255,0.04); }
+        .srv-item.active { background:rgba(124,58,237,0.1); }
+        .srv-radio {
+            width:18px; height:18px; border-radius:50%; border:2px solid rgba(255,255,255,0.2);
+            flex-shrink:0; transition:all 0.15s ease; position:relative;
+        }
+        .srv-radio.active { border-color:#7c3aed; }
+        .srv-radio.active::after {
+            content:''; position:absolute; inset:3px; border-radius:50%; background:#7c3aed;
+        }
+        .srv-info { flex:1; min-width:0; }
+        .srv-name { font-size:0.88rem; font-weight:700; color:#fff; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+        .srv-auto-desc { font-size:0.73rem; color:rgba(255,255,255,0.38); margin-top:2px; }
+        .srv-fastest-badge {
+            font-size:0.6rem; font-weight:800; padding:2px 7px; border-radius:99px;
+            background:rgba(34,197,94,0.12); color:#4ade80;
+            border:1px solid rgba(34,197,94,0.25); text-transform:uppercase; letter-spacing:0.07em;
+        }
+        .srv-check { width:16px; height:16px; flex-shrink:0; stroke:#7c3aed; }
+        .srv-divider { height:1px; background:rgba(255,255,255,0.06); margin:6px 2px; }
+        @media (max-width:600px) {
+            .settings-row { flex-direction:column; align-items:flex-start; }
+            .settings-row-right { width:100%; justify-content:space-between; }
+            .settings-section { padding:0 14px 48px; }
+        }
+
+        .ph-section { max-width:1200px; margin:0 auto; padding:0 20px 60px; }
+        .ph-section-header {
+            display:flex; align-items:center; justify-content:space-between;
+            margin-bottom:20px; gap:12px; flex-wrap:wrap;
+        }
+        .ph-heading {
+            font-family:'Outfit',sans-serif; font-size:1.4rem; font-weight:800;
+            color:#fff; margin:0; display:flex; align-items:center; gap:12px;
+        }
+        .ph-heading::before {
+            content:''; width:4px; height:22px; border-radius:4px;
+            background:#7c3aed; display:inline-block; flex-shrink:0;
+        }
+        .ph-heading span { font-size:0.75rem; font-weight:600; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:0.1em; }
+        .ph-clear-btn {
+            padding:7px 16px; border-radius:8px; border:1.5px solid rgba(255,255,255,0.12);
+            background:transparent; color:rgba(255,255,255,0.55); font-size:0.78rem;
+            font-weight:600; cursor:pointer; transition:all 0.15s ease; white-space:nowrap;
+            font-family:'Outfit',sans-serif;
+        }
+        .ph-clear-btn:hover { background:rgba(239,68,68,0.12); border-color:rgba(239,68,68,0.4); color:#f87171; }
+        .ph-empty {
+            text-align:center; padding:48px 20px;
+            color:rgba(255,255,255,0.35); font-size:0.9rem; line-height:1.7;
+            background:rgba(255,255,255,0.02); border-radius:14px;
+            border:1px solid rgba(255,255,255,0.05);
+        }
+        .ph-empty svg { display:block; margin:0 auto 16px; opacity:0.25; }
+        .ph-date-group { margin-bottom:32px; }
+        .ph-date-label {
+            font-size:0.78rem; font-weight:700; color:rgba(255,255,255,0.4);
+            text-transform:uppercase; letter-spacing:0.12em;
+            margin:0 0 12px; display:flex; align-items:center; gap:10px;
+        }
+        .ph-date-label::after { content:''; flex:1; height:1px; background:rgba(255,255,255,0.06); }
+        .ph-row {
+            display:flex; gap:14px; overflow-x:auto; padding-bottom:8px;
+            scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
+        }
+        .ph-row::-webkit-scrollbar { height:4px; }
+        .ph-row::-webkit-scrollbar-track { background:transparent; }
+        .ph-row::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.12); border-radius:2px; }
+        .ph-card {
+            flex-shrink:0; width:190px; scroll-snap-align:start;
+            background:#111118; border-radius:10px; overflow:hidden;
+            border:1px solid rgba(255,255,255,0.06); cursor:pointer;
+            transition:transform 0.2s ease, border-color 0.2s ease; position:relative;
+        }
+        .ph-card:hover { transform:translateY(-3px); border-color:rgba(124,58,237,0.35); }
+        .ph-thumb {
+            position:relative; width:100%; aspect-ratio:16/9; overflow:hidden;
+            background:#0e0e16;
+        }
+        .ph-thumb img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.3s ease; }
+        .ph-card:hover .ph-thumb img { transform:scale(1.05); }
+        .ph-play {
+            position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+            background:rgba(0,0,0,0.3); opacity:0; transition:opacity 0.2s ease;
+        }
+        .ph-card:hover .ph-play { opacity:1; }
+        .ph-play-icon {
+            width:36px; height:36px; border-radius:50%;
+            background:rgba(124,58,237,0.9); display:flex; align-items:center; justify-content:center;
+        }
+        .ph-play-icon svg { width:14px; height:14px; fill:#fff; margin-left:2px; }
+        .ph-ep-tag {
+            position:absolute; bottom:6px; left:6px; background:rgba(0,0,0,0.8);
+            color:#fff; font-size:0.6rem; font-weight:800; padding:2px 6px;
+            border-radius:4px; letter-spacing:0.04em; backdrop-filter:blur(4px);
+        }
+        .ph-progress-wrap {
+            position:absolute; bottom:0; left:0; right:0; height:3px; background:rgba(255,255,255,0.12);
+        }
+        .ph-progress-bar { height:100%; background:#7c3aed; border-radius:0 2px 0 0; }
+        .ph-remove {
+            position:absolute; top:6px; right:6px; width:22px; height:22px;
+            border-radius:50%; border:none; background:rgba(0,0,0,0.7);
+            color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;
+            opacity:0; transition:opacity 0.15s ease; backdrop-filter:blur(4px);
+            padding:0;
+        }
+        .ph-remove svg { width:10px; height:10px; }
+        .ph-card:hover .ph-remove { opacity:1; }
+        .ph-remove:hover { background:rgba(239,68,68,0.85); }
+        .ph-body { padding:9px 10px 10px; }
+        .ph-title {
+            font-size:0.78rem; font-weight:700; color:#fff;
+            white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin:0 0 3px;
+        }
+        .ph-ep-title {
+            font-size:0.68rem; color:rgba(255,255,255,0.4);
+            white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin:0;
+        }
+        @media (max-width:600px) {
+            .ph-card { width:155px; }
+            .ph-heading { font-size:1.15rem; }
+            .ph-section { padding:0 14px 48px; }
+        }
+        .mal-status-dot {
+            width:10px; height:10px; border-radius:50%; flex-shrink:0;
+        }
+        .mal-status-dot.watching { background:#3b82f6; }
+        .mal-status-dot.plan_to_watch { background:#06b6d4; }
+        .mal-status-dot.completed { background:#22c55e; }
+        .mal-status-dot.dropped { background:#ef4444; }
+        .mal-status-dot.on_hold { background:#f97316; }
+        .mal-status-dot.rewatching { background:#a855f7; }
+
+        .mal-edit-modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
+            z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+        .mal-edit-modal-overlay.active .mal-edit-modal-content { transform: scale(1); opacity: 1; }
+        .mal-edit-modal-content {
+            background: #111118; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+            width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto;
+            transform: scale(0.95); opacity: 0; transition: transform 0.25s ease, opacity 0.25s ease;
+        }
+        .mal-edit-body { padding: 24px 24px 0; }
+        .mal-edit-body h2 { font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0 0 18px; }
+        .mal-edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .mal-edit-field label {
+            display: block; font-size: 0.73rem; font-weight: 600; color: rgba(255,255,255,0.4);
+            text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+        }
+        .mal-edit-footer {
+            padding: 16px 24px; display: flex; align-items: center; justify-content: space-between;
+            border-top: 1px solid rgba(255,255,255,0.06); margin-top: 20px;
+        }
+        .mal-save-btn {
+            background: #2563eb; border: none; border-radius: 8px; color: #fff;
+            font-size: 0.85rem; font-weight: 700; padding: 9px 22px; cursor: pointer;
+            font-family: 'Outfit', sans-serif; transition: background 0.15s ease;
+        }
+        .mal-save-btn:hover { background: #1d4ed8; }
+        .mal-cancel-btn {
+            background: transparent; border: 1.5px solid rgba(255,255,255,0.12); border-radius: 8px;
+            color: rgba(255,255,255,0.6); font-size: 0.85rem; font-weight: 600; padding: 9px 18px;
+            cursor: pointer; font-family: 'Outfit', sans-serif; transition: all 0.15s ease;
+        }
+        .mal-cancel-btn:hover { border-color: rgba(255,255,255,0.25); color: #fff; }
+        .mal-delete-btn {
+            background: transparent; border: none; padding: 8px; border-radius: 8px;
+            color: rgba(255,255,255,0.35); cursor: pointer; transition: all 0.15s ease; display: flex;
+        }
+        .mal-delete-btn:hover { background: rgba(239,68,68,0.12); color: #f87171; }
+        .al-mal-separator {
+            padding: 14px 12px 6px; display: flex; align-items: center; gap: 10px;
+        }
+        .al-mal-separator span {
+            font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;
+            color: rgba(59,130,246,0.7); white-space: nowrap;
+        }
+        .al-mal-separator::after {
+            content: ''; flex: 1; height: 1px; background: rgba(59,130,246,0.15);
+        }
+        .al-list-btn.mal-tab { color: rgba(255,255,255,0.6); }
+        .al-list-btn.mal-tab.active { background: rgba(59,130,246,0.12); color: #93c5fd; }
+        .al-list-btn.mal-tab.active svg { stroke: #93c5fd; }
+        .al-list-btn.mal-tab:hover { background: rgba(59,130,246,0.08); }
+    </style>
+</head>
+
+<body>
+    <header id="header">
+        <div class="container">
+            <a href="/" class="logo">
+                <div class="logo-wordmark">
+                    <span class="l">K</span><span class="l">U</span><span class="l">R</span><span
+                        class="l">O</span><span class="l">V</span><span class="l"
+                        style="transform: scaleX(-1); display: inline-block;">E</span><span class="l">X</span><span
+                        class="l">A</span>
+                </div>
+            </a>
+
+            <nav id="main-nav">
+                <a href="index.html">Home</a>
+                <a href="browse.html">Browse</a>
+                <a href="schedule.html">Schedule</a>
+                <a href="music.html">Music</a>
+            </nav>
+
+            <div class="search-wrap">
+                <span class="search-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" x2="21" y2="16.65" />
+                    </svg>
+                </span>
+                <input type="text" id="search-input" class="search-input" placeholder="Search anime…"
+                    autocomplete="off">
+                <div class="autocomplete" id="autocomplete"></div>
+            </div>
+
+            <div class="auth-nav" id="auth-nav"></div>
+
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+
+        <div class="mobile-nav" id="mobile-nav">
+            <div class="mobile-search-wrap">
+                <span class="search-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" x2="21" y2="16.65" />
+                    </svg>
+                </span>
+                <input type="text" id="mobile-search-input" class="search-input" placeholder="Search anime…"
+                    autocomplete="off">
+            </div>
+
+            <div id="mobile-auth-nav"
+                style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; margin-bottom: 12px; display: flex; flex-direction: column;">
+            </div>
+
+            <nav class="mobile-nav-links">
+                <a href="index.html">Home</a>
+                <a href="browse.html">Browse</a>
+                <a href="schedule.html">Schedule</a>
+                <a href="music.html">Music</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="profile-container">
+
+        <div class="profile-banner" id="profile-banner">
+            <div class="banner-overlay">
+                <button class="edit-btn" onclick="openAssetModal('background')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    Edit Background
+                </button>
+            </div>
+        </div>
+
+        <div class="profile-info-section">
+            <div class="profile-avatar-wrapper">
+                <div class="profile-avatar-lg" id="profile-avatar">
+                    <img id="profile-avatar-img" src="" style="display:none;" alt="Avatar">
+                    <span id="profile-avatar-initial" style="display:none;"></span>
+                </div>
+                <div class="avatar-edit-overlay" onclick="openAssetModal('avatar')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 20h9"></path>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="profile-text-info">
+                <h1 id="profile-username" class="skeleton-text" style="min-width: 150px;">-</h1>
+                <p id="profile-email" class="skeleton-text" style="min-width: 200px;">-</p>
+            </div>
+        </div>
+    </main>
+
+    <div id="guest-signin-banner" class="guest-signin-banner" style="display:none;">
+        <div class="guest-signin-card">
+            <div class="guest-signin-text">
+                <h2>Welcome, Guest</h2>
+                <p>Sign in to sync your watchlist across devices, track your progress, and connect AniList.</p>
+            </div>
+            <div class="guest-signin-actions">
+                <button class="guest-btn-signin" onclick="openAuthModal('login')">Sign In</button>
+                <button class="guest-btn-register" onclick="openAuthModal('register')">Create Account</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="al-dashboard" id="al-dashboard" style="display: none;">
+        <div class="al-stats-row">
+            <div class="al-stat-box">
+                <span class="al-stat-val" id="al-total-anime">-</span>
+                <span class="al-stat-label">Total Anime</span>
+            </div>
+            <div class="al-stat-box">
+                <span class="al-stat-val" id="al-days-watched">-</span>
+                <span class="al-stat-label">Days</span>
+            </div>
+            <div class="al-stat-box">
+                <span class="al-stat-val" id="al-mean-score">-</span>
+                <span class="al-stat-label">Mean Score</span>
+            </div>
+        </div>
+
+        <div class="al-content">
+            <div class="al-sidebar">
+                <div class="al-filters">
+                    <input type="text" class="al-input" id="al-filter-title" placeholder="Search my list...">
+                </div>
+                <div class="al-lists-menu">
+                    <button class="al-list-btn active" data-status="ALL">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M8 12h8m-4-4v8" />
+                        </svg>
+                        All
+                    </button>
+                    <button class="al-list-btn" data-status="CURRENT">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <path d="M12 2v20M2 12h20" />
+                        </svg>
+                        Watching
+                    </button>
+                    <button class="al-list-btn" data-status="PLANNING">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                        </svg>
+                        Planning
+                    </button>
+                    <button class="al-list-btn" data-status="COMPLETED">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        Completed
+                    </button>
+                    <button class="al-list-btn" data-status="DROPPED">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                        Dropped
+                    </button>
+                    <div class="al-mal-separator" id="al-mal-sidebar" style="display:none;">
+                        <span>MyAnimeList</span>
+                    </div>
+                    <button class="al-list-btn mal-tab" id="mal-btn-ALL" data-mal-status="ALL" style="display:none;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="12" cy="12" r="10" /><path d="M8 12h8m-4-4v8" />
+                        </svg>
+                        All
+                    </button>
+                    <button class="al-list-btn mal-tab" id="mal-btn-watching" data-mal-status="watching" style="display:none;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polygon points="5 3 19 12 5 21 5 3"/>
+                        </svg>
+                        Watching
+                    </button>
+                    <button class="al-list-btn mal-tab" id="mal-btn-plan_to_watch" data-mal-status="plan_to_watch" style="display:none;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        Planning
+                    </button>
+                    <button class="al-list-btn mal-tab" id="mal-btn-completed" data-mal-status="completed" style="display:none;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        Completed
+                    </button>
+                    <button class="al-list-btn mal-tab" id="mal-btn-on_hold" data-mal-status="on_hold" style="display:none;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>
+                        </svg>
+                        On Hold
+                    </button>
+                    <button class="al-list-btn mal-tab" id="mal-btn-dropped" data-mal-status="dropped" style="display:none;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                        Dropped
+                    </button>
+                    <button class="al-list-btn mal-tab" id="mal-btn-rewatching" data-mal-status="rewatching" style="display:none;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M1 4v6h6"/><path d="M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+                        </svg>
+                        Rewatching
+                    </button>
+                    <div class="al-kv-separator">
+                        <span>Kurovexa</span>
+                    </div>
+                    <button class="al-list-btn al-kv-tab-btn" data-kv-panel="mylist">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M19 11H5M19 6H5M19 16H5M19 21H5"/>
+                        </svg>
+                        My List
+                    </button>
+                    <button class="al-list-btn al-kv-tab-btn" data-kv-panel="history">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>
+                        </svg>
+                        Watch History
+                    </button>
+                    <button class="al-list-btn al-kv-tab-btn" data-kv-panel="settings">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
+                        Settings
+                    </button>
+                </div>
+            </div>
+            <div class="al-grid-wrapper" style="min-height: 400px;">
+                <div id="al-anilist-panel">
+                    <div class="al-anime-grid" id="al-anime-grid">
+                    </div>
+                </div>
+                <div id="al-mal-panel" style="display:none;">
+                    <div class="al-anime-grid" id="al-mal-grid">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="connect-anilist-wrap" style="display:none;">
+        <div id="connect-anilist-prompt" style="display:none;"></div>
+        <div id="anilist-badge" style="display:none;"><span id="anilist-username-text"></span></div>
+    </div>
+
+    <div id="kv-mylist-section" class="kv-list-wrap" style="display:none;">
+        <h2 class="kv-list-heading">My List <span>on Kurovexa</span></h2>
+        <div class="kv-list-grid" id="kv-mylist-grid"></div>
+    </div>
+
+    <div id="local-list-section" class="kv-list-wrap" style="display:none;">
+        <h2 class="kv-list-heading">My List <span>saved on this device</span></h2>
+        <div class="kv-list-grid" id="local-list-grid"></div>
+    </div>
+
+    <div id="profile-history-section" class="ph-section">
+        <div class="ph-section-header">
+            <h2 class="ph-heading">Watch History <span>on this device</span></h2>
+            <button class="ph-clear-btn" id="ph-clear-btn" style="display:none;">Clear All</button>
+        </div>
+        <div id="ph-body"></div>
+    </div>
+
+    <div class="al-edit-modal-overlay" id="al-edit-modal">
+        <div class="al-edit-modal-content" onclick="event.stopPropagation()">
+            <div class="al-edit-flex">
+                <div class="al-edit-form">
+                    <div class="al-edit-body">
+                        <h2 id="al-edit-title">Anime Title</h2>
+                        <div class="al-edit-grid">
+                            <div class="al-edit-field">
+                                <label>Status</label>
+                                <select id="al-edit-status" class="al-select">
+                                    <option value="CURRENT">Watching</option>
+                                    <option value="PLANNING">Planning</option>
+                                    <option value="COMPLETED">Completed</option>
+                                    <option value="DROPPED">Dropped</option>
+                                    <option value="PAUSED">Paused</option>
+                                    <option value="REPEATING">Rewatching</option>
+                                </select>
+                            </div>
+                            <div class="al-edit-field">
+                                <label>Episode Progress (<span id="al-edit-total-eps">?</span> Eps)</label>
+                                <input type="number" id="al-edit-progress" class="al-input" value="0">
+                            </div>
+                            <div class="al-edit-field">
+                                <label>Score (0-10 decimal)</label>
+                                <input type="number" id="al-edit-score" class="al-input" step="0.1" min="0" max="10"
+                                    value="0">
+                            </div>
+                            <div class="al-edit-field">
+                                <label>Start Date</label>
+                                <input type="date" id="al-edit-start" class="al-input">
+                            </div>
+                            <div class="al-edit-field">
+                                <label>End Date</label>
+                                <input type="date" id="al-edit-end" class="al-input">
+                            </div>
+                            <div class="al-edit-field">
+                                <label>Total Rewatches</label>
+                                <input type="number" id="al-edit-repeat" class="al-input" value="0">
+                            </div>
+                        </div>
+                        <div class="al-edit-field" style="margin-top: 15px;">
+                            <label>Notes</label>
+                            <textarea id="al-edit-notes" class="al-input" rows="3"
+                                placeholder="Add your notes here..."></textarea>
+                        </div>
+                    </div>
+                    <div class="al-edit-footer">
+                        <button class="al-delete-btn" id="al-delete-btn" title="Delete from list"
+                            onclick="deleteAlEntry()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m-6 11l4-4m0 4l-4-4" />
+                            </svg>
+                        </button>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="al-save-btn" id="al-save-entry-btn">Save Changes</button>
+                            <button class="al-cancel-btn" onclick="closeAlEditModal()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mal-edit-modal-overlay" id="mal-edit-modal" onclick="if(event.target===this)closeMalEditModal()">
+        <div class="mal-edit-modal-content" onclick="event.stopPropagation()">
+            <div class="mal-edit-body">
+                <h2 id="mal-edit-title">Anime Title</h2>
+                <div class="mal-edit-grid">
+                    <div class="mal-edit-field">
+                        <label>Status</label>
+                        <select id="mal-edit-status" class="al-select">
+                            <option value="watching">Watching</option>
+                            <option value="plan_to_watch">Planning</option>
+                            <option value="completed">Completed</option>
+                            <option value="on_hold">On Hold</option>
+                            <option value="dropped">Dropped</option>
+                            <option value="rewatching">Rewatching</option>
+                        </select>
+                    </div>
+                    <div class="mal-edit-field">
+                        <label>Episodes (<span id="mal-edit-total-eps">?</span> total)</label>
+                        <input type="number" id="mal-edit-progress" class="al-input" value="0" min="0">
+                    </div>
+                    <div class="mal-edit-field">
+                        <label>Score (0–10)</label>
+                        <input type="number" id="mal-edit-score" class="al-input" min="0" max="10" step="1" value="0">
+                    </div>
+                    <div class="mal-edit-field">
+                        <label>Start Date</label>
+                        <input type="date" id="mal-edit-start" class="al-input">
+                    </div>
+                    <div class="mal-edit-field">
+                        <label>Finish Date</label>
+                        <input type="date" id="mal-edit-finish" class="al-input">
+                    </div>
+                </div>
+            </div>
+            <div class="mal-edit-footer">
+                <button class="mal-delete-btn" id="mal-delete-btn" title="Remove from list">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                </button>
+                <div style="display:flex;gap:10px;">
+                    <button class="mal-save-btn" id="mal-save-btn">Save Changes</button>
+                    <button class="mal-cancel-btn" onclick="closeMalEditModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="asset-modal-overlay" id="asset-modal">
+        <div class="asset-modal-content" onclick="event.stopPropagation()">
+            <div class="asset-modal-header">
+                <h2 id="asset-modal-title">Select Avatar</h2>
+                <button class="close-asset-modal" onclick="closeAssetModal()">&times;</button>
+            </div>
+
+            <div class="asset-modal-body" id="asset-grid-container">
+
+            </div>
+
+            <div class="asset-modal-footer">
+                <button class="asset-cancel-btn" onclick="closeAssetModal()">Cancel</button>
+                <button class="asset-save-btn" id="asset-save-btn" onclick="saveAssetSelection()" disabled>Save
+                    Selection</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="profile-settings-section" class="settings-section">
+        <h2 class="kv-list-heading" style="margin-bottom:20px;">Connected Accounts</h2>
+        <div class="settings-card" style="margin-bottom:32px;">
+            <div class="settings-row">
+                <div class="settings-row-label">
+                    <div class="settings-row-name" style="display:flex;align-items:center;gap:8px;">
+                        <img src="https://anilist.co/img/icons/icon.svg" style="width:16px;height:16px;" alt="AniList">
+                        AniList
+                    </div>
+                    <div class="settings-row-desc" id="al-connection-desc">Not connected</div>
+                </div>
+                <div class="settings-row-right" id="al-connection-right">
+                    <button class="settings-change-btn" onclick="openAnilistAuth('profile')">Connect</button>
+                </div>
+            </div>
+            <div class="settings-row">
+                <div class="settings-row-label">
+                    <div class="settings-row-name" style="display:flex;align-items:center;gap:8px;">
+                        <img src="https://cdn.myanimelist.net/img/sp/icon/apple-touch-icon-256.png" style="width:16px;height:16px;border-radius:4px;" alt="MAL">
+                        MyAnimeList
+                    </div>
+                    <div class="settings-row-desc" id="mal-connection-desc">Not connected</div>
+                </div>
+                <div class="settings-row-right" id="mal-connection-right">
+                    <button class="settings-change-btn" onclick="openMalAuth()">Connect</button>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="kv-list-heading" style="margin-bottom:20px;">Settings</h2>
+        <div class="settings-card">
+            <div class="settings-row">
+                <div class="settings-row-label">
+                    <div class="settings-row-name">Default Server</div>
+                    <div class="settings-row-desc">Automatically selected when you open an episode</div>
+                </div>
+                <div class="settings-row-right">
+                    <span class="settings-server-val" id="settings-server-name">Auto (Recommended)</span>
+                    <button class="settings-change-btn" onclick="openServerModal()">Change</button>
+                </div>
+            </div>
+            <div class="settings-row">
+                <div class="settings-row-label">
+                    <div class="settings-row-name">Anime Tracking</div>
+                    <div class="settings-row-desc">Sync your watch progress to connected accounts</div>
+                </div>
+                <div class="settings-row-right">
+                    <select id="tracking-mode-select" onchange="saveTrackingMode(this.value)"
+                        style="background:#0e0e16;border:1.5px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;padding:7px 14px;font-size:0.85rem;font-family:'Outfit',sans-serif;cursor:pointer;outline:none;-webkit-appearance:none;appearance:none;min-width:150px;">
+                        <option value="none">Don't Track</option>
+                        <option value="anilist">AniList Only</option>
+                        <option value="mal">MAL Only</option>
+                        <option value="both">Both</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="srv-modal-overlay" id="srv-modal-overlay" onclick="if(event.target===this)closeServerModal()">
+        <div class="srv-modal-card">
+            <div class="srv-modal-header">
+                <h3 class="srv-modal-title">Default Server</h3>
+                <button class="srv-modal-close" onclick="closeServerModal()">&#x2715;</button>
+            </div>
+            <div class="srv-modal-body" id="srv-modal-list"></div>
+            <div class="srv-modal-footer">
+                <button class="srv-modal-cancel" onclick="closeServerModal()">Cancel</button>
+                <button class="srv-modal-save" onclick="saveServerModal()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="ph-confirm-overlay" id="ph-confirm-overlay">
+        <div class="ph-confirm-card">
+            <div class="ph-confirm-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6m4-6v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            </div>
+            <div class="ph-confirm-title" id="ph-confirm-title">Clear all watch history?</div>
+            <div class="ph-confirm-sub" id="ph-confirm-sub">This will permanently remove all your watch history from this device. This cannot be undone.</div>
+            <div class="ph-confirm-actions">
+                <button class="ph-confirm-cancel" id="ph-confirm-cancel">Cancel</button>
+                <button class="ph-confirm-ok" id="ph-confirm-ok">Clear All</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="auth-modal-container"></div>
+    <div id="toast-container"></div>
+
+    <script defer src="js/api.js?v=123"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LfzHX8sAAAAAN70WElpj4nM__wxhllZQNZCAFGb" async
+        defer></script>
+    <script defer src="js/auth.js?v=119"></script>
+    <script defer src="js/mobile-nav.js?v=6"></script>
+    <script defer src="js/profile.js?v=116"></script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+
+</html>

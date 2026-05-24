@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Anime Details — Kurovexa</title>
+    <meta name="description" content="Discover anime details, ratings, episodes, characters and recommendations on Kurovexa.">
+    <link rel="stylesheet" href="css/style.css?v=1002">
+    <link rel="stylesheet" href="css/auth.css?v=108">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://graphql.anilist.co" crossorigin>
+    <link rel="dns-prefetch" href="https://graphql.anilist.co">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <style>
+
+        .info-hero {
+            position: relative;
+            width: 100%;
+            min-height: 520px;
+            margin-top: -1px;
+            background: #0a0a0a;
+            overflow: hidden;
+        }
+        .info-hero-bg {
+            position: absolute;
+            inset: 0;
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            transform: scale(1.05);
+            filter: brightness(0.55);
+        }
+        .info-hero::before,
+        .info-hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+        .info-hero::before {
+            background:
+                radial-gradient(120% 80% at 30% 30%, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.85) 70%, #0a0a0a 100%);
+        }
+        .info-hero::after {
+            background: linear-gradient(180deg, rgba(10, 10, 10, 0) 40%, rgba(10, 10, 10, 0.85) 80%, var(--bg-primary, #0a0a0a) 100%);
+        }
+        .info-hero-inner {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            gap: 36px;
+            padding: 96px 28px 56px;
+            align-items: flex-end;
+        }
+        .info-poster {
+            flex: 0 0 240px;
+            width: 240px;
+            aspect-ratio: 2/3;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
+            background: #111;
+        }
+        .info-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .info-head {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .info-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+        .info-eyebrow .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-v, #7c3aed);
+            box-shadow: 0 0 12px var(--accent-v, #7c3aed);
+        }
+        .info-title {
+            font-family: 'Poppins', 'Inter', sans-serif;
+            font-size: clamp(1.8rem, 3.6vw, 3.2rem);
+            font-weight: 900;
+            line-height: 1.05;
+            color: #fff;
+            margin: 0;
+            text-shadow: 0 6px 28px rgba(0, 0, 0, 0.6);
+        }
+        .info-subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.65);
+            font-weight: 500;
+            margin-top: -6px;
+        }
+        .info-meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .info-meta-row .meta-pill {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 6px 12px;
+            border-radius: 999px;
+            backdrop-filter: blur(6px);
+        }
+        .info-meta-row .meta-score {
+            color: #fbbf24;
+        }
+        .info-meta-row .meta-status-airing {
+            color: #22c55e;
+        }
+        .info-genres {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .info-genre-tag {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.85);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .info-genre-tag:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-1px);
+        }
+        .info-cta {
+            display: flex;
+            gap: 12px;
+            margin-top: 4px;
+            flex-wrap: wrap;
+        }
+        .info-cta .btn-watch {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-v, #7c3aed) 0%, var(--accent-v2, #9d6ef8) 100%);
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.95rem;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 12px 30px rgba(124, 58, 237, 0.35);
+        }
+        .info-cta .btn-watch:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 40px rgba(124, 58, 237, 0.5);
+        }
+        .info-cta .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 22px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .info-cta .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.14);
+        }
+
+        .info-body {
+            padding: 40px 28px 80px;
+        }
+        .info-section {
+            margin-bottom: 48px;
+        }
+        .info-section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Poppins', 'Inter', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #fff;
+            margin: 0 0 18px;
+        }
+        .info-section-title::before {
+            content: '';
+            width: 4px;
+            height: 22px;
+            border-radius: 4px;
+            background: var(--accent-v, #7c3aed);
+        }
+        .info-grid-2 {
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+            gap: 32px;
+            align-items: flex-start;
+        }
+        .info-desc {
+            font-size: 0.96rem;
+            line-height: 1.75;
+            color: rgba(255, 255, 255, 0.78);
+            margin: 0;
+            position: relative;
+            max-height: 22em;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .info-desc.expanded {
+            max-height: 200em;
+        }
+        .info-desc::after {
+            content: '';
+            position: absolute;
+            inset: auto 0 0 0;
+            height: 3em;
+            background: linear-gradient(180deg, rgba(10, 10, 10, 0) 0%, var(--bg-primary, #0a0a0a) 100%);
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .info-desc.expanded::after {
+            opacity: 0;
+        }
+        .info-desc-toggle {
+            display: inline-block;
+            margin-top: 8px;
+            color: var(--accent-v2, #9d6ef8);
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .info-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 22px;
+        }
+        .info-stat-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .info-stat-row .label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(255, 255, 255, 0.45);
+        }
+        .info-stat-row .value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .info-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .info-tag {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .info-row-scroll {
+            display: flex;
+            gap: 14px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+        }
+        .info-row-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+        .info-row-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .info-char-card {
+            flex: 0 0 130px;
+            text-align: center;
+            text-decoration: none;
+        }
+        .info-char-card .pic {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #1a1a1a;
+            margin-bottom: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.08);
+        }
+        .info-char-card .name {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.25;
+            margin: 0;
+        }
+        .info-char-card .role {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 2px;
+        }
+
+        .info-rec-card {
+            flex: 0 0 160px;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .info-rec-card .poster {
+            width: 100%;
+            aspect-ratio: 2/3;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #1a1a1a;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .info-rec-card .poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+        .info-rec-card:hover .poster img {
+            transform: scale(1.05);
+        }
+        .info-rec-card .title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 8px 0 0;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .info-loading {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.95rem;
+        }
+        .info-loading svg {
+            width: 28px;
+            height: 28px;
+            margin-right: 12px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 880px) {
+            .info-hero-inner {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                padding: 80px 22px 40px;
+                gap: 24px;
+            }
+            .info-poster {
+                flex: 0 0 180px;
+                width: 180px;
+            }
+            .info-meta-row,
+            .info-genres,
+            .info-cta {
+                justify-content: center;
+            }
+            .info-grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .info-hero {
+                min-height: auto;
+            }
+            .info-body {
+                padding: 32px 22px 80px;
+            }
+        }
+        @media (max-width: 540px) {
+            .info-hero-inner {
+                padding: 72px 20px 36px;
+            }
+            .info-poster {
+                flex: 0 0 150px;
+                width: 150px;
+            }
+            .info-cta .btn-watch {
+                padding: 12px 22px;
+                font-size: 0.88rem;
+            }
+            .info-body {
+                padding: 28px 20px 80px;
+            }
+        }
+
+        .mylist-popover {
+            position: fixed;
+            inset: 0;
+            z-index: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.65);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.22s ease, visibility 0s linear 0.22s;
+        }
+        .mylist-popover.open {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.22s ease;
+        }
+        .mylist-card {
+            background: #161622;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 18px;
+            padding: 28px;
+            width: min(380px, 92vw);
+            box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+            transform: translateY(18px);
+            transition: transform 0.22s ease;
+        }
+        .mylist-popover.open .mylist-card { transform: translateY(0); }
+        .mylist-card-title {
+            font-family: 'Poppins','Inter',sans-serif;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #fff;
+            margin: 0 0 4px;
+        }
+        .mylist-card-subtitle {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.45);
+            margin: 0 0 20px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .mylist-status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .mylist-status-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1.5px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.7);
+            font-size: 0.83rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-align: left;
+        }
+        .mylist-status-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+            color: #fff;
+        }
+        .mylist-status-btn.active {
+            background: rgba(124,58,237,0.25);
+            border-color: rgba(124,58,237,0.7);
+            color: #c4b5fd;
+        }
+        .mylist-anilist-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 14px;
+            border-radius: 10px;
+            border: 1.5px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.03);
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .mylist-anilist-row:hover { background: rgba(255,255,255,0.07); }
+        .mylist-anilist-row input[type=checkbox] { accent-color: #7c3aed; width:16px; height:16px; cursor:pointer; }
+        .mylist-anilist-row label { font-size:0.82rem; font-weight:600; color:rgba(255,255,255,0.7); cursor:pointer; flex:1; }
+        .mylist-footer { display:flex; gap:8px; }
+        .mylist-save-btn {
+            flex: 1;
+            padding: 11px 0;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(135deg, #7c3aed, #9d6ef8);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: opacity 0.15s ease;
+        }
+        .mylist-save-btn:hover { opacity: 0.85; }
+        .mylist-remove-btn {
+            padding: 11px 14px;
+            border-radius: 10px;
+            border: 1.5px solid rgba(239,68,68,0.4);
+            background: transparent;
+            color: rgba(239,68,68,0.8);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .mylist-remove-btn:hover { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.7); color:#ef4444; }
+        .mylist-cancel-btn {
+            padding: 11px 14px;
+            border-radius: 10px;
+            border: 1.5px solid rgba(255,255,255,0.1);
+            background: transparent;
+            color: rgba(255,255,255,0.5);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .mylist-cancel-btn:hover { background: rgba(255,255,255,0.06); color:#fff; }
+        #mylist-btn.saved {
+            border-color: rgba(124,58,237,0.5) !important;
+            color: #c4b5fd !important;
+        }
+    </style>
+</head>
+
+<body>
+    <header id="header">
+        <div class="container">
+            <a href="/" class="logo">
+                <div class="logo-wordmark">
+                    <span class="l">K</span><span class="l">U</span><span class="l">R</span><span class="l">O</span><span
+                        class="l">V</span><span class="l"
+                        style="transform: scaleX(-1); display: inline-block;">E</span><span class="l">X</span><span
+                        class="l">A</span>
+                </div>
+            </a>
+
+            <nav id="main-nav">
+                <a href="index.html">Home</a>
+                <a href="browse.html">Browse</a>
+                <a href="schedule.html">Schedule</a>
+            </nav>
+
+            <div class="search-wrap">
+                <span class="search-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </span>
+                <input type="text" id="search-input" class="search-input" placeholder="Search anime…"
+                    autocomplete="off">
+                <div class="autocomplete" id="autocomplete"></div>
+            </div>
+
+            <div class="auth-nav" id="auth-nav"></div>
+
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+
+        <div class="mobile-nav" id="mobile-nav">
+            <div class="mobile-search-wrap">
+                <span class="search-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </span>
+                <input type="text" id="mobile-search-input" class="search-input" placeholder="Search anime…"
+                    autocomplete="off">
+                <div class="autocomplete" id="mobile-autocomplete"></div>
+            </div>
+
+            <div id="mobile-auth-nav"
+                style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; margin-bottom: 12px; display: flex; flex-direction: column;">
+            </div>
+
+            <nav class="mobile-nav-links">
+                <a href="index.html">Home</a>
+                <a href="browse.html">Browse</a>
+                <a href="schedule.html">Schedule</a>
+                <a href="manga.html">Manga</a>
+            <a href="music.html">Music</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <div id="info-loading" class="info-loading">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" stroke-opacity="0.2"/>
+                <path d="M12 2a10 10 0 0 1 10 10"/>
+            </svg>
+            Loading anime details…
+        </div>
+
+        <section id="info-hero" class="info-hero" style="display:none;">
+            <div class="info-hero-bg" id="info-hero-bg"></div>
+            <div class="container info-hero-inner">
+                <div class="info-poster">
+                    <img id="info-poster-img" src="" alt="">
+                </div>
+                <div class="info-head">
+                    <div class="info-eyebrow">
+                        <span class="dot"></span>
+                        <span id="info-eyebrow-text">Anime</span>
+                    </div>
+                    <h1 id="info-title" class="info-title"></h1>
+                    <div id="info-subtitle" class="info-subtitle"></div>
+                    <div id="info-meta-row" class="info-meta-row"></div>
+                    <div id="info-genres" class="info-genres"></div>
+                    <div class="info-cta">
+                        <a id="watch-now-btn" class="btn-watch" href="#">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+                            Watch Now
+                        </a>
+                        <button id="share-btn" class="btn-secondary" type="button">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                            Share
+                        </button>
+                        <button id="mylist-btn" class="btn-secondary" type="button">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                            Add to List
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="container info-body" id="info-body" style="display:none;">
+            <div class="info-section">
+                <div class="info-grid-2">
+                    <div>
+                        <h2 class="info-section-title">Synopsis</h2>
+                        <p id="info-desc" class="info-desc"></p>
+                        <button id="info-desc-toggle" class="info-desc-toggle" style="display:none;" type="button">Show more</button>
+                    </div>
+                    <div>
+                        <h2 class="info-section-title">Information</h2>
+                        <div class="info-stats" id="info-stats"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section" id="info-tags-section" style="display:none;">
+                <h2 class="info-section-title">Tags</h2>
+                <div class="info-tags" id="info-tags"></div>
+            </div>
+
+            <div class="info-section" id="info-chars-section" style="display:none;">
+                <h2 class="info-section-title">Characters</h2>
+                <div class="info-row-scroll" id="info-chars"></div>
+            </div>
+
+            <div class="info-section" id="info-recs-section" style="display:none;">
+                <h2 class="info-section-title">You Might Also Like</h2>
+                <div class="info-row-scroll" id="info-recs"></div>
+            </div>
+        </div>
+        <div id="mylist-popover" class="mylist-popover" onclick="if(event.target===this)window.closeMyListPopover&&window.closeMyListPopover()">
+            <div class="mylist-card">
+                <div class="mylist-card-title">Add to My List</div>
+                <div class="mylist-card-subtitle" id="mylist-anime-title"></div>
+                <div class="mylist-status-grid">
+                    <button class="mylist-status-btn" data-status="Watching">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg>
+                        Watching
+                    </button>
+                    <button class="mylist-status-btn" data-status="Planning">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Planning
+                    </button>
+                    <button class="mylist-status-btn" data-status="Completed">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        Completed
+                    </button>
+                    <button class="mylist-status-btn" data-status="Dropped">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        Dropped
+                    </button>
+                    <button class="mylist-status-btn" data-status="Paused">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                        Paused
+                    </button>
+                </div>
+                <div id="mylist-anilist-row" class="mylist-anilist-row" style="display:none;" onclick="document.getElementById('mylist-anilist-sync').click()">
+                    <input type="checkbox" id="mylist-anilist-sync" onclick="event.stopPropagation()">
+                    <img src="https://anilist.co/img/icons/icon.svg" style="width:18px;height:18px;" alt="AniList">
+                    <label for="mylist-anilist-sync">Also save to AniList</label>
+                </div>
+                <div class="mylist-footer" id="mylist-footer">
+                    <button class="mylist-save-btn" id="mylist-save-btn">Save to My List</button>
+                    <button class="mylist-cancel-btn" onclick="closeMyListPopover()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <a href="/" class="logo" style="margin-bottom:0">
+                <div class="logo-wordmark">
+                    <span class="l">K</span><span class="l">U</span><span class="l">R</span><span class="l">O</span><span
+                        class="l">V</span><span class="l"
+                        style="transform: scaleX(-1); display: inline-block;">E</span><span class="l">X</span><span
+                        class="l">A</span>
+                </div>
+            </a>
+            <p class="footer-brand-desc">Your premium destination for anime streaming. Watch thousands of titles subbed
+                and dubbed in crystal-clear HD &mdash; free, always.</p>
+            <div class="footer-links-row">
+                <a href="index.html">Home</a>
+                <a href="browse.html">Browse</a>
+                <a href="schedule.html">Schedule</a>
+            </div>
+            <div class="footer-links-row">
+                <a href="terms.html">Terms of Use</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="dmca.html">DMCA</a>
+            </div>
+            <div class="footer-bottom">
+                <span class="footer-copy">© 2026 Kurovexa. All rights reserved.</span>
+                <span class="footer-disclaimer">Kurovexa does not store any video files. All content is sourced from
+                    third-party providers.</span>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toast-container"></div>
+
+    <script defer src="js/api.js?v=123"></script>
+    <script defer src="js/info.js?v=3"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LfzHX8sAAAAAN70WElpj4nM__wxhllZQNZCAFGb" async defer></script>
+    <script defer src="js/auth.js?v=119"></script>
+    <script defer src="js/mobile-nav.js?v=5"></script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+
+</html>
