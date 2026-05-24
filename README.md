@@ -11,6 +11,9 @@ Built with vanilla HTML/CSS/JS and a Python Flask backend.
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-purple?style=flat-square)](#license)
 
+<a href="https://discord.gg/zs22ZJttZM">
+    <img src="https://img.shields.io/badge/Discord-Join%20Community-5865F2?style=for-the-badge&logo=discord&logoColor=white"/>
+  </a>
 </div>
 
 ---
