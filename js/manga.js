@@ -1,4 +1,4 @@
-const VAULT_BASE = 'https://vaultapi-one.vercel.app';
+const VAULT_BASE = 'YOUR API URL';
 
 async function vaultFetch(path) {
 
