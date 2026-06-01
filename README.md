@@ -26,7 +26,7 @@ It proxies episode data through your own backend so nothing leaks your API sourc
 
 ---
 
-> Note: Due to constant updates, Anivexa has been made closed-source and wont be maintained properly on template version. It will get updated once in a few months. The hosted version will be main[...]
+> Note: Due to constant updates, Anivexa has been made closed-source and wont be maintained properly on template version. It will get updated once in a few months. The hosted version will be maintained Properly
 
 ## Features
 
